@@ -1,4 +1,4 @@
-function histograms = computeHistogramsFromImageList(vocabulary, names, varargin)
+function histograms = computeHistogramsFromImageList(class, vocabulary, names, varargin)
 % COMPUTEHISTOGRAMSFROMIMAGELIST  Compute historams for multiple images.
 %   HISTOGRAMS = COMPUTEHISTOGRAMSFROMIMAGELIST(VOCABULARY, NAMES)
 %   computes the histograms of visual words for the list of image
@@ -23,7 +23,7 @@ parfor i = 1:len
     if exist(names{i}, 'file')
         fullPath = names{i};
     else
-        fullPath = fullfile('../data','person', names{i});
+        fullPath = fullfile('../data', class, names{i});
     end
     if useCache
         % try to retrieve from cache

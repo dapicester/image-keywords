@@ -9,7 +9,6 @@ names = cat(1, names{:})';
 
 vocabularyFile = fullfile('../data', ['vocabulary_' class '.mat']);
 if ~exist(vocabularyFile, 'file')
-    fprintf('Building vocabulary for class "%s" ...\n', class);
     vocabulary = computeVocabularyFromImageList(class, vl_colsubset(names, 200, 'uniform'));
     save(vocabularyFile, '-struct', 'vocabulary');
     fprintf('Vocabulary for class "%s" saved to %s.\n', class, vocabularyFile);
