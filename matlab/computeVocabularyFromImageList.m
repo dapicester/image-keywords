@@ -1,8 +1,8 @@
-function vocabulary = computeVocabularyFromImageList(names)
+function vocabulary = computeVocabularyFromImageList(class, names)
 % COMPUTEVOCABULARYFROMIMAGELIST  Compute a visual word vocabulary.
-%   VOCABULARY = COMPUTEVOCABULARYFROMIMAGELIST(NAMES) computes a
-%   visual word vocabulary from a list of image names (paths)
-%   NAMES.
+%   VOCABULARY = COMPUTEVOCABULARYFROMIMAGELIST('CLASS', NAMES) computes a
+%   visual word vocabulary from a list of image names (paths) NAMES
+%   belonging to the class CLASS.
 %
 %   VOCABULARY is a structure with fields:
 %
@@ -26,7 +26,7 @@ parfor i = 1:len
     if exist(names{i}, 'file')
         fullPath = names{i};
     else
-        fullPath = fullfile('../data', 'person', names{i});
+        fullPath = fullfile('../data', class, names{i});
     end
     fprintf('Extracting features from %s (%d/%d)\n', fullPath, i, len);
     im = imread(fullPath);
