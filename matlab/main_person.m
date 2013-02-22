@@ -9,8 +9,10 @@ loadData
 
 %% Train a classifier
 
-% TODO: scaling data (optional)
-% TODO: model estimation
+% scaling data (optional)
+if scaling
+    [histograms, ranges] = svmScale(histograms);
+end
 
 model = trainOneSVM(labels, histograms);
 
@@ -34,6 +36,9 @@ stats(predictedLabels, labels);
 
 %% Classify test images and assess performance
 
+if scaling
+    testHistograms = svmScale(testHistograms, 'ranges', ranges);
+end
 [predictedLabels, ~, scores] = predictSVM(testLabels, testHistograms, model);
 
 % visualize the ranked list of images

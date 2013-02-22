@@ -17,3 +17,13 @@ if exist('vl_version', 'file') ~= 3
     fprintf('found, ');
 end
 fprintf('ok\n');
+
+% Parallel computing
+if exist('matlabpool', 'file') == 2 && matlabpool('size') == 0
+    matlabpool('open')
+end
+
+fprintf('Setting variables\n');
+
+scaling = true;
+

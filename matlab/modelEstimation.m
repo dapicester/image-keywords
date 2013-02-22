@@ -5,6 +5,11 @@ clc, clear all
 setup
 loadData
 
+if scaling
+    [histograms, ranges] = svmScale(histograms);
+    testHistograms = svmScale(testHistograms, 'ranges', ranges);
+end
+
 %% Grid search on coarse grid
 
 params_coarse = gridOneSVM(labels, histograms);
