@@ -12,7 +12,7 @@ clear pos
 
 % validation data
 pos = load('../data/person_val_hist.mat');
-neg = load('../data/background_val_hist.mat');
+neg = load('../data/reject_val_hist.mat');
 testNames = [pos.names; neg.names];
 testHistograms = double([pos.histograms neg.histograms]');
 testLabels = [ones(numel(pos.names), 1); -ones(numel(neg.names), 1)];

@@ -1,5 +1,7 @@
 *~
-data/images
+data/*
+!data/*.mat
+!data/*.txt
 dependencies/*
 !dependencies/libsvm-3.16.tar.gz
 !dependencies/vlfeat-0.9.16-bin.tar.gz

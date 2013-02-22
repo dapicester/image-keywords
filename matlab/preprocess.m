@@ -11,5 +11,5 @@ for class = { 'person' }
     vocabulary = buildVocabulary(classname);
     buildHistograms(classname, vocabulary, 'train');
     buildHistograms(classname, vocabulary, 'val');
-    buildHistograms('background', vocabulary', 'val');
+    buildHistograms('reject', vocabulary', 'val');
 end
