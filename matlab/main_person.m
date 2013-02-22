@@ -43,7 +43,7 @@ end
 
 % visualize the ranked list of images
 figure(3), clf, set(3, 'name', 'Ranked testing images (subset)');
-displayRankedImageList('person', names, scores(1:length(testNames)));
+displayRankedImageList('person', testNames, scores(1:length(testNames)));
 
 % Visualize the precision-recall curve
 figure(4), clf, set(4, 'name', 'Precision-recall on test data');

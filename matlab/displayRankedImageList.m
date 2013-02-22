@@ -7,7 +7,7 @@ function displayRankedImageList(class, names, scores, varargin)
 %   Use DISPLAYRANKEDIMAGELIST(..., 'numImages', N) to display N
 %   images. Use DISPLAYRANKEDIMAGELIST(..., 'uniform', true) to select
 %   images uniformly in the list, rather than from the top.
-
+%
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
@@ -23,10 +23,10 @@ else
 end
 for i = 1:length(perm)
     vl_tightsubplot(length(perm), i, 'box', 'inner');
-    if exist(names{perm(i)}, 'file')
-        fullPath = names{perm(i)} ;
-    else
-        fullPath = fullfile('../data', class, names{perm(i)});
+    fullPath =fullfile('../data', class, names{perm(i)});
+    if ~exist(fullPath, 'file')
+        % XXX it is the rejection class
+        fullPath = fullfile('../data', 'reject', names{perm(i)});
     end
     imagesc(imread(fullPath));
     text(10, 10, sprintf('score: %.2f', scores(perm(i))), ...
