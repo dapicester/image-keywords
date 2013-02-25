@@ -1,26 +1,27 @@
-function histogram = computeHistogram(width, height, keypoints, words)
+function histogram = computeHistogram(width, height, keypoints, words, varargin)
 % COMPUTEHISTOGRAM  Compute a spatial histogram of visual words.
 %   HISTOGRAM = COMPUTEHISTOGRAM(WIDTH, HEIGHT, KEYPOINTS, WORDS)
-%   computes a 2x2 spatial histogram of the N visual words
-%   WORDS. KEYPOINTS is a 2 x N matrix of x,y coordinates of the
+%   computes a RxC spatial histogram of the N visual words WORDS.
+%   KEYPOINTS is a 2 x N matrix of x,y coordinates of the
 %   visual words and WIDTH and HEIGHT are the image dimensions; these
 %   quantities are needed for the geometric tiling.
+%   By default the spatial histogram is computed on a 2x2 tile
+%   grid using 1000 words. Use COMPUTEHISTOGRAM(..., 'numWords', NUM) or
+%   COMPUTEHISTOGRAMS(..., 'tiles', [ROWS COLUMNS]) to override default
+%   values.
 
 % Author: Andrea Vedaldi
+% Author: Paolo D'Apice
 
-numWords = 1000;
-numSpatialX = 2;
-numSpatialY = 2;
+opts.numWords = 1000;
+opts.tiles = [2 2];
+opts = vl_argparse(opts, varargin);
 
-for i = 1:length(numSpatialX) % FIXME: length(scalar) is always 1
-    binsx = vl_binsearch(linspace(1, width, numSpatialX(i) + 1), keypoints(1,:));
-    binsy = vl_binsearch(linspace(1, height, numSpatialY(i) + 1), keypoints(2,:));
-    bins = sub2ind([numSpatialY(i) numSpatialX(i) numWords], ...
-                   binsy, binsx, words);
-    htile = zeros(numSpatialY(i) * numSpatialX(i) * numWords, 1);
-    htile = vl_binsum(htile, ones(size(bins)), bins);
-    htiles{i} = single(htile / sum(htile));
-end
+binsx = vl_binsearch(linspace(1, width, opts.tiles(1) + 1), keypoints(1,:));
+binsy = vl_binsearch(linspace(1, height, opts.tiles(2) + 1), keypoints(2,:));
+bins = sub2ind([opts.tiles(2) opts.tiles(1) opts.numWords], ...
+               binsy, binsx, words);
+htile = zeros(opts.tiles(2) * opts.tiles(1) * opts.numWords, 1);
+htile = vl_binsum(htile, ones(size(bins)), bins);
 
-histogram = cat(1, htiles{:});
-histogram = single(histogram / sum(histogram));
+histogram = single(htile / sum(htile));

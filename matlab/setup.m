@@ -27,3 +27,4 @@ fprintf('Setting variables\n');
 
 scaling = true;
 
+tiling = true;
