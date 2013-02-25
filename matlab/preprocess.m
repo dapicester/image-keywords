@@ -1,6 +1,8 @@
 % PREPROCESS Build the visual word vocabulary and compute histograms.
 %
-%   This script should be executed only once after checking out the code.
+%   This script should be executed after checking out the code.
+
+% Author: Paolo D'Apice
 
 clc, clear all
 

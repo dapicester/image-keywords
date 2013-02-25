@@ -5,6 +5,8 @@ function model = trainOneSVM(varargin)
 %   MODEL = TRAINONESVM(LABELS, DATA)
 %   MODEL = TRAINONESVM(LABELS, DATA, 'libsvm options')
 
+% Author: Paolo D'Apice
+
 options = '-s 2 -q ';
 
 if nargin == 1

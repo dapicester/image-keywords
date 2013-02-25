@@ -7,7 +7,7 @@ function res = stats(actual, expected, varargin)
 %
 %   Use STATS(..., 'plot', true) to plot results.%   
 %   Use STATS(..., 'print', true) to print statistics results.
-%
+
 % Author: Paolo D'Apice
 
 opts.plot = false;

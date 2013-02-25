@@ -7,6 +7,8 @@ function histograms = buildHistograms(class, vocabulary, suffix)
 %
 %   'SUFFIX' can be either 'train' or 'val'
 
+% Author: Paolo D'Apice
+
 fprintf('Processing class %s (%s) ...\n', class, suffix);
 
 names = textread(fullfile('../data', sprintf('%s_%s.txt', class, suffix)), '%s');

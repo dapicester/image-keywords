@@ -1,5 +1,7 @@
 % MODELESTIMATION  Model estimation for one-class SVM.
 
+% Author: Paolo D'Apice
+
 clear all
 
 setup

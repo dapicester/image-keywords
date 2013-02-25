@@ -7,7 +7,7 @@ function [scaled, ranges] = svmScale(input, varargin)
 %
 %   SCALED = svmScale(INPUT, 'ranges', RANGES) Scale input data according to 
 %   the given ranges.
-%
+
 % Author: Paolo D'Apice
 
 opts.lower = 0;

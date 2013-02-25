@@ -1,5 +1,5 @@
 function [words,distances] = quantizeDescriptors(vocabulary, descriptors)
-% QUANTIZEDESCRIPTOR  Quantize a visual descriptor to get a visual word.
+% QUANTIZEDESCRIPTORS  Quantize a visual descriptor to get a visual word.
 %   [WORDS, DISTANCES] = QUANTIZEDESCRIPTORS(VOCABULARY, DESCRIPTORS)
 %   projects the D x N matrix of DESCRIPTORS to the visual word
 %   VOCABULARY. WORDS is a 1 x N vector containing the indexes of the

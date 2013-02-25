@@ -1,6 +1,6 @@
 function [keypoints,descriptors] = computeFeatures(im)
 % COMPUTEFEATURES  Compute keypoints and descriptors for an image.
-%   [KEYPOINTS, DESCRIPTORS] = COMPUTEFEAUTRES(IM) computes the
+%   [KEYPOINTS, DESCRIPTORS] = COMPUTEFEATURES(IM) computes the
 %   keypoints and descriptors from the image IM. KEYPOINTS is a 4 x K
 %   matrix with one column for keypoint, specifying the X,Y location,
 %   the SCALE, and the CONTRAST of the keypoint.

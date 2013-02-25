@@ -7,7 +7,7 @@ function params = gridOneSVM(labels, data, varargin)
 % 
 %   PARAMS is a data structure containing the fields 'bestn', 'bestg' and
 %   'bestcv' containing the best nu, gamma and cross-validation values.
-%
+
 % Author: Paolo D'Apice
 
 opts.n = 0.1:0.1:0.8;

@@ -7,7 +7,7 @@ function params = gridSVC(labels, data)
 % 
 %   PARAMS is a data structure containing the fields 'bestc', 'bestg' and
 %   'bestcv' containing the best C, gamma and cross-validation values.
-%
+
 % Author: Paolo D'Apice
 
 opts.log2c = -1:-3;

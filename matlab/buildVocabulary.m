@@ -4,6 +4,8 @@ function vocabulary = buildVocabulary(class)
 %   vocabulary = BUILDVOCABULARY('NAME') compute vocabulary for images
 %   in class NAME.
 
+% Author: Paolo D'Apice
+
 names{1} = textread(fullfile('../data', [class '_train.txt']), '%s');
 names = cat(1, names{:})';
 

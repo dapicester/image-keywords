@@ -7,7 +7,7 @@ function displayRankedImageList(class, names, scores, varargin)
 %   Use DISPLAYRANKEDIMAGELIST(..., 'numImages', N) to display N
 %   images. Use DISPLAYRANKEDIMAGELIST(..., 'uniform', true) to select
 %   images uniformly in the list, rather than from the top.
-%
+
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 

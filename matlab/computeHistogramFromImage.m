@@ -1,9 +1,9 @@
 function histogram = computeHistogramFromImage(vocabulary, im)
 % COMPUTEHISTOGRAMFROMIMAGE  Compute histogram of visual words for an image.
-%   HISTOGRAM = COMPUTEHISTOGRAMFROMIMAGE(VOCABULARY,IM) compute the
+%   HISTOGRAM = COMPUTEHISTOGRAMFROMIMAGE(VOCABULARY, IM) compute the
 %   histogram of visual words for image IM given the visual word
 %   vocaublary VOCABULARY. To do so the function calls in sequence
-%   COMPUTEFEATURES(), QUANTIZEFEATURES(), and COMPUTEHISTOGRAM().
+%   COMPUTEFEATURES(), QUANTIZEDESCRIPTORS(), and COMPUTEHISTOGRAM().
 %
 %   See also: COMPUTEVOCABULARYFROMIMAGELIST().
 

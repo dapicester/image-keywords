@@ -1,5 +1,7 @@
 % LOADDATA  Load training and validation data.
 
+% Author: Paolo D'Apice
+
 vocabulary = load('../data/vocabulary_person.mat');
 
 % target class

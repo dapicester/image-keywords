@@ -1,6 +1,6 @@
 function [predicted_labels, accuracy, scores] = predictSVM(labels, data, model)
 % PREDICTSVM  Make predictions using LIBSVM.
-%
+
 % Author: Paolo D'Apice
 
 options = '-q';

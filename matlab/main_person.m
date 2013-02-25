@@ -1,5 +1,7 @@
 % MAIN_PERSON Train and test a classifier on "person" images.
 
+% Author: Paolo D'Apice
+
 clear all
 setup
 
