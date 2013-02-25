@@ -1,18 +1,20 @@
 % MAIN_PERSON Train and test a classifier on "person" images.
 
-clc, clear all
-setup;
+clear all
+setup
 
 %% Data preparation
 
 loadData
 
-%% Train a classifier
 
 % scaling data (optional)
 if scaling
     [histograms, ranges] = svmScale(histograms);
+    testHistograms = svmScale(testHistograms, 'ranges', ranges);
 end
+
+%% Train a classifier
 
 model = trainOneSVM(labels, histograms);
 
@@ -31,30 +33,27 @@ model = trainOneSVM(labels, histograms);
 [~, ~, info] = vl_pr(labels, scores);
 fprintf('Train AP: %.2f\n', info.auc);
 
-fprintf(' === Training results ===\n');
-stats(predictedLabels, labels);
+% fprintf(' === Training results ===\n');
+% stats(predictedLabels, labels);
 
 %% Classify test images and assess performance
 
-if scaling
-    testHistograms = svmScale(testHistograms, 'ranges', ranges);
-end
 [predictedLabels, ~, scores] = predictSVM(testLabels, testHistograms, model);
 
 % visualize the ranked list of images
-figure(3), clf, set(3, 'name', 'Ranked testing images (subset)');
-displayRankedImageList('person', testNames, scores(1:length(testNames)));
+% figure(3), clf, set(3, 'name', 'Ranked testing images (subset)');
+% displayRankedImageList('person', testNames, scores(1:length(testNames)));
 
 % Visualize the precision-recall curve
-figure(4), clf, set(4, 'name', 'Precision-recall on test data');
-vl_pr(testLabels, scores);
+% figure(4), clf, set(4, 'name', 'Precision-recall on test data');
+% vl_pr(testLabels, scores);
 
 % results
 [~, ~, info] = vl_pr(testLabels, scores);
 fprintf('Test AP: %.2f\n', info.auc);                                                                                                                                                                           
 
 fprintf('Testing results:\n');
-stats(predictedLabels, testLabels);
+stats(predictedLabels, testLabels, 'plot', true);
 
 [~, perm] = sort(scores, 'descend');
 topK = 36;

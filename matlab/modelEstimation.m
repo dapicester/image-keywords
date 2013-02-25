@@ -1,6 +1,6 @@
 % MODELESTIMATION  Model estimation for one-class SVM.
 
-clc, clear all
+clear all
 
 setup
 loadData
@@ -12,16 +12,17 @@ end
 
 %% Grid search on coarse grid
 
-params_coarse = gridOneSVM(labels, histograms);
-fprintf('Coarse grid:'), params_coarse                          %#ok<NOPTS>
+params = gridOneSVM(labels, histograms);
+fprintf('Coarse grid:'), params                                 %#ok<NOPTS>
 
 %% Grid search on finer grid around previous best parameters
 
 neighbors = @(c,w,d) c - w*d : d : c + w*d;
 
-n = neighbors(params.bestn, 3, 0.01);
-log2g = neighbors(log2(params.bestg), 3, 0.25);
+n = neighbors(params.bestn, 3, 0.02);
+log2g = neighbors(log2(params.bestg), 3, 0.5);
 
+fprintf('Fine grid params:'), n, log2g, pause;                  %#ok<NOPTS>
 params_fine = gridOneSVM(labels, histograms, 'n', n, 'log2g', log2g);
 fprintf('Fine grid:'), params_fine                              %#ok<NOPTS>
 
@@ -33,4 +34,5 @@ model = svmtrain(labels, histograms, ['-s 2 -n ' num2str(params_fine.bestn) ' -g
 svmpredict(labels, histograms, model);
 
 % on validation data
-[p a s] = svmpredict(testLabels, testHistograms, model);
+predictedLabels = svmpredict(testLabels, testHistograms, model);
+stats(predictedLabels, testLabels, 'plot', true);
