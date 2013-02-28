@@ -26,5 +26,4 @@ end
 fprintf('Setting variables\n');
 
 scaling = true;
-
-tiling = true;
+fprintf('- scaling = %d\n', scaling);

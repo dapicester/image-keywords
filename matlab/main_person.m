@@ -7,12 +7,6 @@ setup
 
 loadData
 
-% tiling (optional)
-if ~tiling
-    histograms = removeTiling(histograms);
-    testHistograms = removeTiling(testHistograms);
-end
-
 % scaling data (optional)
 if scaling
     [histograms, ranges] = svmScale(histograms);
