@@ -1,6 +1,5 @@
 *~
 data/*
-!data/*.mat
 !data/*.txt
 dependencies/*
 !dependencies/libsvm-3.16.tar.gz
