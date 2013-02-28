@@ -4,6 +4,10 @@
 
 fprintf('Checking environment:\n');
 
+global ROOT_DIR DATA_DIR
+ROOT_DIR = fileparts(pwd);
+DATA_DIR = fullfile(ROOT_DIR, 'data');
+
 % LIBSVM
 fprintf('- LIBSVM ... ');
 if exist('svmtrain', 'file') ~= 3

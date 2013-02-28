@@ -6,12 +6,17 @@ function vocabulary = buildVocabulary(class)
 
 % Author: Paolo D'Apice
 
-names{1} = textread(fullfile('../data', [class '_train.txt']), '%s');
+global DATA_DIR
+
+names{1} = textread(fullfile(DATA_DIR, [class '_train.txt']), '%s');
 names = cat(1, names{:})';
 
-vocabularyFile = fullfile('../data', ['vocabulary_' class '.mat']);
+numImages = 200;
+
+vocabularyFile = fullfile(DATA_DIR, ['vocabulary_' class '.mat']);
 if ~exist(vocabularyFile, 'file')
-    vocabulary = computeVocabularyFromImageList(class, vl_colsubset(names, 200, 'uniform'));
+    vocabulary = computeVocabularyFromImageList(class, ...
+                        vl_colsubset(names, numImages, 'uniform'));
     save(vocabularyFile, '-struct', 'vocabulary');
     fprintf('Vocabulary for class "%s" saved to %s.\n', class, vocabularyFile);
 else

@@ -24,7 +24,8 @@ neighbors = @(c,w,d) c - w*d : d : c + w*d;
 n = neighbors(params.bestn, 3, 0.02);
 log2g = neighbors(log2(params.bestg), 3, 0.5);
 
-fprintf('Fine grid params:'), n, log2g, pause;                  %#ok<NOPTS>
+fprintf('Fine grid params:'), n, log2g                          %#ok<NOPTS>
+fprintf('Press a key to continue'), pause
 params_fine = gridOneSVM(labels, histograms, 'n', n, 'log2g', log2g);
 fprintf('Fine grid:'), params_fine                              %#ok<NOPTS>
 
