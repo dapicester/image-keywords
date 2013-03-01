@@ -23,4 +23,5 @@ width = size(im, 2);
 height= size(im, 1);
 [keypoints, descriptors] = computeFeatures(im);
 words = quantizeDescriptors(vocabulary, descriptors);
-histogram = computeHistogram(width, height, keypoints, words);
+numWords = size(vocabulary.words, 2);
+histogram = computeHistogram(width, height, keypoints, words, numWords);
