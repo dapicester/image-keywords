@@ -21,8 +21,9 @@ end
 
 len = numel(names);
 histograms = cell(1, len);
+dataDir = DATA_DIR;
 parfor i = 1:len
-    fullPath = fullfile(DATA_DIR, class, names{i});
+    fullPath = fullfile(dataDir, class, names{i});
     if useCache
         % try to retrieve from cache
         histograms{i} = getFromCache(fullPath);

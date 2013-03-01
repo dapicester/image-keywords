@@ -11,16 +11,10 @@ function histogram = computeHistogramFromImage(vocabulary, im)
 % Author: Paolo D'Apice
 
 if ischar(im)
-    if exist(im, 'file')
-        fullPath = im;
-    else
-        fullPath = fullfile('../data', 'person', im);
-    end
-    im = imread(fullPath);
+    im = imread(im);
 end
 
-width = size(im, 2);
-height= size(im, 1);
+[height, width] = size(im);
 [keypoints, descriptors] = computeFeatures(im);
 words = quantizeDescriptors(vocabulary, descriptors);
 numWords = size(vocabulary.words, 2);

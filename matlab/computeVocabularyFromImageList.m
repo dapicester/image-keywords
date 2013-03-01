@@ -13,6 +13,9 @@ function vocabulary = computeVocabularyFromImageList(class, names)
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
+global DATA_DIR
+data_dir = DATA_DIR;
+
 numWords = 1000;
 numFeatures = numWords * 100;
 
@@ -20,14 +23,10 @@ numFeatures = numWords * 100;
 % Only NUMFEATURES overall descriptors are retrieved as more do not really
 % improve the estimation of the visual dictionary but slow down computation.
 
-descriptors = cell(1, numel(names));
 len = numel(names);
+descriptors = cell(1, len);
 parfor i = 1:len
-    if exist(names{i}, 'file')
-        fullPath = names{i};
-    else
-        fullPath = fullfile('../data', class, names{i});
-    end
+    fullPath = fullfile(data_dir, class, names{i});
     fprintf('Extracting features from %s (%d/%d)\n', fullPath, i, len);
     im = imread(fullPath);
     [~, d] = computeFeatures(im);
