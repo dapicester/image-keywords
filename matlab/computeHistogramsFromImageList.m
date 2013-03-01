@@ -10,6 +10,8 @@ function histograms = computeHistogramsFromImageList(class, vocabulary, names, v
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
+global DATA_DIR
+
 useCache = length(varargin) > 1;
 if useCache
     cache = varargin{1};
@@ -20,11 +22,7 @@ end
 len = numel(names);
 histograms = cell(1, len);
 parfor i = 1:len
-    if exist(names{i}, 'file')
-        fullPath = names{i};
-    else
-        fullPath = fullfile('../data', class, names{i});
-    end
+    fullPath = fullfile(DATA_DIR, class, names{i});
     if useCache
         % try to retrieve from cache
         histograms{i} = getFromCache(fullPath);
