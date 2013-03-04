@@ -42,5 +42,5 @@ if opts.plot
     figure(99), clf
     bar(expected, 'r'), xlim([1 num])
     hold on
-    stem(actual)
+    bar(actual)
 end
