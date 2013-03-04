@@ -31,5 +31,6 @@ end
 
 fprintf('Setting variables:\n');
 
-scaling = true;
-fprintf('- scaling = %d\n', scaling);
+global SCALING
+SCALING = true;
+fprintf('- scaling = %d\n', SCALING);

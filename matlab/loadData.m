@@ -1,23 +1,27 @@
+function [vocabulary, train, val] = loadData(class)
 % LOADDATA  Load training and validation data.
+%   [VOCABULARY, TRAIN, VAL] = LOADDATA(CLASS) Load words vocabulary,
+%   training and validation data for the given CLASS.
 
 % Author: Paolo D'Apice
 
-vocabulary = load('../data/vocabulary_person.mat');
+global DATA_DIR;
 
-% target class
-pos = load('../data/person_train_hist.mat');
-names = pos.names;
-histograms = double(pos.histograms');
-labels = ones(size(histograms, 1), 1);
-fprintf('Number of training images: %d\n', size(histograms, 1));
+vocabulary = load(fullfile(DATA_DIR, sprintf('vocabulary_%s.mat', class)));
+
+% training data (target class)
+pos = load(fullfile(DATA_DIR, sprintf('%s_train_hist.mat', class)));
+train.names = pos.names;
+train.histograms = double(pos.histograms');
+train.labels = ones(size(train.histograms, 1), 1);
+fprintf('Number of training images: %d\n', size(train.histograms, 1));
 clear pos
 
-% validation data
-pos = load('../data/person_val_hist.mat');
-neg = load('../data/reject_val_hist.mat');
-testNames = [pos.names; neg.names];
-testHistograms = double([pos.histograms neg.histograms]');
-testLabels = [ones(numel(pos.names), 1); -ones(numel(neg.names), 1)];
+% validation data (target and rejection class)
+pos = load(fullfile(DATA_DIR, sprintf('%s_val_hist.mat', class)));
+neg = load(fullfile(DATA_DIR, sprintf('%s_reject_hist.mat', class)));
+val.names = [pos.names; neg.names];
+val.histograms = double([pos.histograms neg.histograms]');
+val.labels = [ones(numel(pos.names), 1); -ones(numel(neg.names), 1)];
 fprintf('Number of validation images: %d positive, %d negative\n', ...
-        sum(testLabels > 0), sum(testLabels < 0));
-clear pos neg
+        sum(val.labels > 0), sum(val.labels < 0));

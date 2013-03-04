@@ -1,20 +1,28 @@
-function vocabulary = buildVocabulary(class)
+function vocabulary = buildVocabulary(class, varargin)
 % BUILDVOCABULARY  Build visual word vocabulary.
 %
 %   vocabulary = BUILDVOCABULARY('NAME') compute vocabulary for images
-%   in class NAME.
+%   in class NAME if not found.
+%   Use BUILDVOCABULARY(..., true) to overwrite an existing
+%   vocabulary.
 
 % Author: Paolo D'Apice
+
+force = false;
+if (nargin == 2)
+    force = varargin{1};
+end
 
 global DATA_DIR
 
 names{1} = textread(fullfile(DATA_DIR, [class '_train.txt']), '%s');
 names = cat(1, names{:})';
 
-numImages = 200;
+% Use only a subset of training images
+numImages = 50;
 
 vocabularyFile = fullfile(DATA_DIR, ['vocabulary_' class '.mat']);
-if ~exist(vocabularyFile, 'file')
+if ~exist(vocabularyFile, 'file') | force
     vocabulary = computeVocabularyFromImageList(class, ...
                         vl_colsubset(names, numImages, 'uniform'));
     save(vocabularyFile, '-struct', 'vocabulary');

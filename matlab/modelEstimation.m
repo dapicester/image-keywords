@@ -1,20 +1,25 @@
+function params = modelEstimation(class)
 % MODELESTIMATION  Model estimation for one-class SVM.
+%   PARAMS = MODELESTIMATION(CLASS) Perform grid search on one-class SVM
+%   parameters for the given class.
 
 % Author: Paolo D'Apice
 
-clear all
+global SCALING
 
-setup
-loadData
+fprintf('Model estimantion for class "%s"\n\n', class)
 
-if scaling
-    [histograms, ranges] = svmScale(histograms);
-    testHistograms = svmScale(testHistograms, 'ranges', ranges);
+[~, train, test] = loadData(class);
+
+if SCALING
+    fprintf('Scaling data\n')
+    [train.histograms, ranges] = svmScale(train.histograms);
+    test.histograms = svmScale(test.histograms, 'ranges', ranges);
 end
 
 %% Grid search on coarse grid
 
-params = gridOneSVM(labels, histograms);
+params = gridOneSVM(train.labels, train.histograms, 'n', 0.5);
 fprintf('Coarse grid:'), params                                 %#ok<NOPTS>
 
 %% Grid search on finer grid around previous best parameters
@@ -26,16 +31,16 @@ log2g = neighbors(log2(params.bestg), 3, 0.5);
 
 fprintf('Fine grid params:'), n, log2g                          %#ok<NOPTS>
 fprintf('Press a key to continue'), pause
-params_fine = gridOneSVM(labels, histograms, 'n', n, 'log2g', log2g);
+params_fine = gridOneSVM(train.labels, train.histograms, 'n', n, 'log2g', log2g);
 fprintf('Fine grid:'), params_fine                              %#ok<NOPTS>
 
 %% Test
 
-model = svmtrain(labels, histograms, ['-s 2 -n ' num2str(params_fine.bestn) ' -g ' num2str(params_fine.bestg)]);
+model = svmtrain(train.labels, train.histograms, ['-s 2 -n ' num2str(params_fine.bestn) ' -g ' num2str(params_fine.bestg)]);
 
 % on training data
-svmpredict(labels, histograms, model);
+svmpredict(train.labels, train.histograms, model);
 
 % on validation data
-predictedLabels = svmpredict(testLabels, testHistograms, model);
-stats(predictedLabels, testLabels, 'plot', true);
+predictedLabels = svmpredict(test.labels, test.histograms, model);
+stats(predictedLabels, test.labels, 'plot', true);

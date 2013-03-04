@@ -5,13 +5,14 @@
 % Author: Paolo D'Apice
 
 clc, clear all
-
 setup
 
-for class = { 'person' }
+force = false;
+
+for class = { 'person', 'face', 'animal' }
     classname = char(class);
-    vocabulary = buildVocabulary(classname);
+    vocabulary = buildVocabulary(classname, force);
     buildHistograms(classname, vocabulary, 'train');
-    buildHistograms(classname, vocabulary, 'val');
-    buildHistograms('reject', vocabulary', 'val');
+    buildHistograms(classname, vocabulary, 'val');    
+    buildHistograms(classname, vocabulary, 'reject');
 end

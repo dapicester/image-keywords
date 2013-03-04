@@ -41,3 +41,4 @@ fprintf('Computing visual words and kdtree ...\n');
 descriptors = single([descriptors{:}]);
 vocabulary.words = vl_kmeans(descriptors, numWords, 'verbose', 'algorithm', 'elkan');
 vocabulary.kdtree = vl_kdtreebuild(vocabulary.words);
+vocabulary.class = class;

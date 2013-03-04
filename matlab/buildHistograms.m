@@ -10,11 +10,19 @@ function histograms = buildHistograms(class, vocabulary, suffix)
 % Author: Paolo D'Apice
 
 global DATA_DIR
+isReject = strcmp(suffix, 'reject');
 
 fprintf('Processing class %s (%s) ...\n', class, suffix);
 
-names = textread(fullfile(DATA_DIR, sprintf('%s_%s.txt', class, suffix)), '%s');
-histograms = computeHistogramsFromImageList(class, vocabulary, names); %#ok<*NASGU>
+if isReject
+    filename = 'reject_val.txt';
+    names = textread(fullfile(DATA_DIR, filename), '%s');
+    histograms = computeHistogramsFromImageList('reject', vocabulary, names); %#ok<*NASGU>
+else
+    filename = sprintf('%s_%s.txt', class, suffix);
+    names = textread(fullfile(DATA_DIR, filename), '%s');
+    histograms = computeHistogramsFromImageList(class, vocabulary, names); %#ok<*NASGU>
+end
 
 filename = fullfile(DATA_DIR, sprintf('%s_%s_hist.mat', class, suffix));
 save(filename, 'names', 'histograms');
