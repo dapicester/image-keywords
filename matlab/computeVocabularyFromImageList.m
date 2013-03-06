@@ -16,7 +16,7 @@ function vocabulary = computeVocabularyFromImageList(class, names)
 global DATA_DIR
 data_dir = DATA_DIR;
 
-numWords = 1000;
+numWords = 200;
 numFeatures = numWords * 100;
 
 % This extracts a number of visual descriptors from the specified images. 
