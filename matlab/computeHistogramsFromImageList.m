@@ -31,7 +31,7 @@ parfor i = 1:len
             continue
         end
     end
-    fprintf('Extracting histogram from %s (%d/%d)\n', fullPath, i, len);
+    fprintf('  Extracting histogram from %s (%d/%d)\n', fullPath, i, len);
     histograms{i} = computeHistogramFromImage(vocabulary, fullPath);
     if useCache
         % save to cache

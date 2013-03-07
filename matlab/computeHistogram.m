@@ -15,7 +15,7 @@ function histogram = computeHistogram(width, height, keypoints, words, numWords,
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
-opts.tiles = {[1 1], [2 2]};
+opts.tiles = {[2 2]};
 opts = vl_argparse(opts, varargin);
 
 htiles = cell(1, length(opts.tiles));

@@ -9,10 +9,9 @@ setup
 
 force = false;
 
-for class = { 'person', 'face', 'animal' }
+for class = { 'animal', 'cellphone', 'face', 'person' }
     classname = char(class);
     vocabulary = buildVocabulary(classname, force);
-    buildHistograms(classname, vocabulary, 'train');
-    buildHistograms(classname, vocabulary, 'val');    
+    buildHistograms(classname, vocabulary);
     buildHistograms(classname, vocabulary, 'reject');
 end

@@ -5,13 +5,13 @@ function res = stats(actual, expected, varargin)
 %   structure containing the fields 'accuracy', 'precision', 'recall' and
 %   'fscore'. 
 %
-%   Use STATS(..., 'plot', true) to plot results.%   
+%   Use STATS(..., 'plot', true) to plot results.
 %   Use STATS(..., 'print', true) to print statistics results.
 
 % Author: Paolo D'Apice
 
 opts.plot = false;
-opts.print = true;
+opts.print = false;
 opts = vl_argparse(opts, varargin);
 
 len = @(in) numel(find(in));
@@ -40,7 +40,7 @@ end
 
 if opts.plot
     figure(99), clf
-    bar(expected, 'r'), xlim([1 num])
+    bar(expected, 'r'), xlim([0 num + 1])
     hold on
     bar(actual)
 end

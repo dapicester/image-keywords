@@ -27,7 +27,7 @@ len = numel(names);
 descriptors = cell(1, len);
 parfor i = 1:len
     fullPath = fullfile(data_dir, class, names{i});
-    fprintf('Extracting features from %s (%d/%d)\n', fullPath, i, len);
+    fprintf('  Extracting features from %s (%d/%d)\n', fullPath, i, len);
     im = imread(fullPath);
     [~, d] = computeFeatures(im);
     descriptors{i} = vl_colsubset(d, round(numFeatures / len), 'uniform');

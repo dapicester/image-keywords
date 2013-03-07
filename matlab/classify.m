@@ -1,6 +1,7 @@
-function model = classify(class, varargin)
+function results = classify(class, varargin)
 % CLASSIFY  Train and test a classifier.
-%   CLASSIFY(CLASS) Run the classification code on the given CLASS.
+%   RESULTS = CLASSIFY(CLASS) Run the classification code on the given 
+%   CLASS and returns a structure containing classification metrics.
 %
 %   The function accepts the following options:
 %
@@ -19,8 +20,7 @@ function model = classify(class, varargin)
 %   TrainStats:: [false]
 %     Display statistics on classification results for train images.
 %
-%   TestStats:: [true]
-%     Display statistics on classification results for test images.
+%   See also: STATS()
 
 % Author: Paolo D'Apice
 
@@ -31,12 +31,11 @@ opts.trainPC    = false;
 opts.trainStats = false;
 opts.testRank   = false;
 opts.testPC     = false;
-opts.testStats  = true;
 opts = vl_argparse(opts, varargin);
 
 fprintf('Classifying images in class "%s"\n\n', class)
 
-[~, train, test] = loadData(class);
+[train, test] = loadData(class);
 
 % scaling data (optional)
 if SCALING
@@ -55,7 +54,7 @@ model = trainOneSVM(train.labels, train.histograms);
 % visualize the ranked list of images
 if opts.trainRank
     figure(1), clf, set(1, 'name', 'Ranked training images (subset)');
-    displayRankedImageList('person', train.names, scores(1:length(train.names)));
+    displayRankedImageList(class, train.names, scores(1:length(train.names)));
 end
 
 % visualize the precision-recall curve
@@ -65,10 +64,10 @@ if opts.trainPC
 end
 
 % stats on results
-[~, ~, info] = vl_pr(train.labels, scores);
-fprintf('Train AP: %.2f\n', info.auc);
-
 if opts.trainStats
+    [~, ~, info] = vl_pr(train.labels, scores);
+    fprintf('Train AP: %.2f\n', info.auc);
+
     fprintf(' === Training results ===\n');
     stats(predictedLabels, train.labels);
 end
@@ -80,7 +79,7 @@ end
 % visualize the ranked list of images
 if opts.testRank
     figure(3), clf, set(3, 'name', 'Ranked testing images (subset)');
-    displayRankedImageList('person', test.names, scores(1:length(test.names)));
+    displayRankedImageList(class, test.names, scores(1:length(test.names)));
 end
 
 % visualize the precision-recall curve
@@ -89,15 +88,15 @@ if opts.testPC
     vl_pr(test.labels, scores);
 end
 
-% results
+% stats on results
 [~, ~, info] = vl_pr(test.labels, scores);
-fprintf('Test AP: %.2f\n', info.auc);                                                                                                                                                                           
+fprintf('Test AP: %.2f\n', info.auc);
 
-if opts.testStats
-    fprintf('Testing results:\n');
-    stats(predictedLabels, test.labels, 'plot', true);
-end
+results = stats(predictedLabels, test.labels);
+
+%fprintf('\nConfusion matrix:\n'),
+%disp(confusionmat(test.labels, predictedLabels, 'order', [1 -1])')
 
 [~, perm] = sort(scores, 'descend');
 topK = 36;
-fprintf('\nCorrectly retrieved in the top %d: %d\n', topK, sum(test.labels(perm(1:topK)) > 0));
+fprintf('\nCorrectly retrieved in the top %d: %d\n\n', topK, sum(test.labels(perm(1:topK)) > 0));

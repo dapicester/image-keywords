@@ -15,7 +15,7 @@ end
 
 global DATA_DIR
 
-names{1} = textread(fullfile(DATA_DIR, [class '_train.txt']), '%s');
+names{1} = textread(fullfile(DATA_DIR, [class '.txt']), '%s');
 names = cat(1, names{:})';
 
 % Use only a subset of training images
