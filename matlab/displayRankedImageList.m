@@ -13,9 +13,16 @@ function displayRankedImageList(class, names, scores, varargin)
 
 opts.numImages = 6*6;
 opts.uniform = false;
+opts.outliers = false;
 opts = vl_argparse(opts, varargin);
 
-[~, perm] = sort(scores, 'descend') ;
+global DATA_DIR
+
+bad = isnan(scores);
+scores(bad) = min(scores) - eps;
+
+if opts.outliers, sorting = 'ascend'; else sorting = 'descend'; end
+[~, perm] = sort(scores, sorting);
 if opts.uniform
     perm = vl_colsubset(perm', opts.numImages, 'uniform');
 else
@@ -23,13 +30,13 @@ else
 end
 for i = 1:length(perm)
     vl_tightsubplot(length(perm), i, 'box', 'inner');
-    fullPath =fullfile('../data', class, names{perm(i)});
+    fullPath = fullfile(DATA_DIR, class, names{perm(i)});
     if ~exist(fullPath, 'file')
         % XXX it is the rejection class
-        fullPath = fullfile('../data', 'reject', names{perm(i)});
+        fullPath = fullfile(DATA_DIR, 'reject', names{perm(i)});
     end
     imagesc(imread(fullPath));
-    text(10, 10, sprintf('score: %.2f', scores(perm(i))), ...
+    text(10, 10, sprintf('score: %.4f', scores(perm(i))), ...
         'background','w',...
         'verticalalignment','top', ...
         'fontsize', 8) ;
