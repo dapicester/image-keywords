@@ -11,7 +11,7 @@ DATA_DIR = fullfile(ROOT_DIR, 'data');
 % LIBSVM
 fprintf('- LIBSVM ... ');
 if exist('svmtrain', 'file') ~= 3
-    addpath('../dependencies/libsvm-3.16/matlab')
+    addpath(fullfile(ROOT_DIR, 'dependencies', 'libsvm-3.16', 'matlab'));
     fprintf('found, ');
 end
 fprintf('ok\n');
@@ -19,7 +19,7 @@ fprintf('ok\n');
 % VLFfeat
 fprintf('- VLFeat ... ');
 if exist('vl_version', 'file') ~= 3
-    run('../dependencies/vlfeat-0.9.16/toolbox/vl_setup')
+    run(fullfile(ROOT_DIR, 'dependencies', 'vlfeat-0.9.16', 'toolbox', 'vl_setup'));
     fprintf('found, ');
 end
 fprintf('ok\n');
