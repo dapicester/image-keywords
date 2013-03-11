@@ -5,16 +5,12 @@ function vocabulary = computeVocabularyFromImageList(class, names)
 %   belonging to the class CLASS.
 %
 %   VOCABULARY is a structure with fields:
-%
-%   WORDS:: 128 x K matrix of visual word centers.
-%
-%   KDTREE:: KD-tree indexing the visual word for fast quantization.
+%     WORDS:: 128 x K matrix of visual word centers.
+%     KDTREE:: KD-tree indexing the visual word for fast quantization.
+%     CLASS:: the class name.
 
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
-
-global DATA_DIR
-data_dir = DATA_DIR;
 
 numWords = 200;
 numFeatures = numWords * 100;
@@ -26,7 +22,7 @@ numFeatures = numWords * 100;
 len = numel(names);
 descriptors = cell(1, len);
 parfor i = 1:len
-    fullPath = fullfile(data_dir, class, names{i});
+    fullPath = names{i};
     fprintf('  Extracting features from %s (%d/%d)\n', fullPath, i, len);
     im = imread(fullPath);
     [~, d] = computeFeatures(im);
@@ -39,6 +35,6 @@ end
 
 fprintf('Computing visual words and kdtree ...\n');
 descriptors = single([descriptors{:}]);
-vocabulary.words = vl_kmeans(descriptors, numWords, 'verbose', 'algorithm', 'elkan');
+vocabulary.words = vl_kmeans(descriptors, numWords, 'algorithm', 'elkan');
 vocabulary.kdtree = vl_kdtreebuild(vocabulary.words);
 vocabulary.class = class;

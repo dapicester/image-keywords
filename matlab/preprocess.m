@@ -7,11 +7,9 @@
 clc, clear all
 setup
 
-force = false;
-
 for class = { 'animal', 'cellphone', 'face', 'person' }
     classname = char(class);
-    vocabulary = buildVocabulary(classname, force);
+    vocabulary = buildVocabulary(classname, 'force', false);
     buildHistograms(classname, vocabulary);
-    buildHistograms(classname, vocabulary, 'reject');
+    buildHistograms(classname, vocabulary, 'reject', true);
 end

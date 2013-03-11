@@ -33,8 +33,6 @@ opts.testRank   = false;
 opts.testPC     = false;
 opts = vl_argparse(opts, varargin);
 
-fprintf('Classifying images in class "%s"\n\n', class)
-
 [train, test] = loadData(class);
 
 % scaling data (optional)

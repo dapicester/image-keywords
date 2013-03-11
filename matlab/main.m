@@ -6,11 +6,14 @@ clear all
 setup
 
 for class = { 'animal', 'cellphone', 'face', 'person' }
+    classname = char(class);
+    
     % repeat N times and get average results
     N = 10;
     results = cell(N,1);
     for i = 1:N
-        results{i} = classify(char(class));
+        fprintf(' * Classifying images in class "%s" (%d/%d)\n\n', classname, i, N)
+        results{i} = classify(classname);
     end
     results = struct2dataset(cell2mat(results));
     
