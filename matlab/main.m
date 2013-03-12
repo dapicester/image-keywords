@@ -18,6 +18,8 @@ for class = { 'animal', 'cellphone', 'face', 'person' }
     results = struct2dataset(cell2mat(results));
     
     fprintf('----------------------------\n');
+    fprintf(' Class %s\n', classname);
+    fprintf('----------------------------\n');
     fprintf('  Average accuracy : %f\n', mean(results.accuracy))
     fprintf('  Average precision: %f\n', mean(results.precision))
     fprintf('  Average recall   : %f\n', mean(results.recall))

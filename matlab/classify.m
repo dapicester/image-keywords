@@ -33,6 +33,8 @@ opts.testRank   = false;
 opts.testPC     = false;
 opts = vl_argparse(opts, varargin);
 
+%% Prepare data
+
 [train, test] = loadData(class);
 
 % scaling data (optional)
@@ -42,12 +44,15 @@ if SCALING
     test.histograms = svmScale(test.histograms, 'ranges', ranges);
 end
 
+% kernel
+[train.khistograms, test.khistograms] = precomputeKernel(@chi2Kernel, train.histograms, test.histograms);
+
 %% Train a classifier
 
-model = trainOneSVM(train.labels, train.histograms);
+model = trainOneSVM(train.labels, train.khistograms);
 
 % evaluate on training data
-[predictedLabels, ~, scores] = predictSVM(train.labels, train.histograms, model);
+[predictedLabels, ~, scores] = predictSVM(train.labels, train.khistograms, model);
 
 % visualize the ranked list of images
 if opts.trainRank
@@ -72,7 +77,7 @@ end
 
 %% Classify test images and assess performance
 
-[predictedLabels, ~, scores] = predictSVM(test.labels, test.histograms, model);
+[predictedLabels, ~, scores] = predictSVM(test.labels, test.khistograms, model);
 
 % visualize the ranked list of images
 if opts.testRank
