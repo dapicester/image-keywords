@@ -1,7 +1,10 @@
-function results = classify(class, varargin)
+function results = classify(train, test, kernel, varargin)
 % CLASSIFY  Train and test a classifier.
-%   RESULTS = CLASSIFY(CLASS) Run the classification code on the given 
-%   CLASS and returns a structure containing classification metrics.
+%   RESULTS = CLASSIFY(TRAIN, TEST, KERNEL) Run the classification
+%   algorithm on the given data on the given TRAIN and TEST data using
+%   the function handler KERNEL as kernel function for SVM. 
+%   RESULTS is a structure with fields accuracy, precision, recall and
+%   f-score.
 %
 %   The function accepts the following options:
 %
@@ -24,8 +27,6 @@ function results = classify(class, varargin)
 
 % Author: Paolo D'Apice
 
-global SCALING
-
 opts.trainRank  = false;
 opts.trainPC    = false;
 opts.trainStats = false;
@@ -33,22 +34,9 @@ opts.testRank   = false;
 opts.testPC     = false;
 opts = vl_argparse(opts, varargin);
 
-%% Prepare data
-
-[train, test] = loadData(class);
-
-% scaling data (optional)
-if SCALING
-    fprintf('Scaling data\n')
-    [train.histograms, ranges] = svmScale(train.histograms);
-    test.histograms = svmScale(test.histograms, 'ranges', ranges);
-end
-
-% kernel
-[train.khistograms, test.khistograms] = precomputeKernel(@chi2Kernel, train.histograms, test.histograms);
-
 %% Train a classifier
 
+[train.khistograms, test.khistograms] = precomputeKernel(kernel, train.histograms, test.histograms);
 model = trainOneSVM(train.labels, train.khistograms);
 
 % evaluate on training data
@@ -102,4 +90,4 @@ results = stats(predictedLabels, test.labels);
 
 [~, perm] = sort(scores, 'descend');
 topK = 36;
-fprintf('\nCorrectly retrieved in the top %d: %d\n\n', topK, sum(test.labels(perm(1:topK)) > 0));
+fprintf('Correctly retrieved in the top %d: %d\n\n', topK, sum(test.labels(perm(1:topK)) > 0));

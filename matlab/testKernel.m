@@ -1,13 +1,21 @@
+% TESTKERNEL  Run classification using different kernels.
+
+% Autor: Paolo D'Apice
+
 clc, clear all
 setup
 
 for class = { 'animal', 'cellphone', 'face', 'person' }
-    disp(class)
-    [train, test] = loadData(char(class));
+    classname = char(class);
+    
+    fprintf('* Class "%s"\n', classname);
+    [train, test] = loadData(classname);
 
-    %[train.histograms, ranges] = svmScale(train.histograms);
-    %test.histograms = svmScale(test.histograms, 'ranges', ranges);    
-
+    if SCALING
+        [train.histograms, ranges] = svmScale(train.histograms);
+        test.histograms = svmScale(test.histograms, 'ranges', ranges);
+    end
+        
     for k = { @linearKernel, ...
               @rbfKernel, ...
               @chi2Kernel, ...
@@ -15,7 +23,7 @@ for class = { 'animal', 'cellphone', 'face', 'person' }
               @hellingerKernel, ...
               @histintKernel }
         kernel = k{1};
-        disp(func2str(kernel));
+        fprintf(' - %s:\n', func2str(kernel));
         [train2, test2] = precomputeKernel(kernel, train.histograms, test.histograms);
         model = trainOneSVM(train.labels, train2);
         pred = predictSVM(test.labels, test2, model);

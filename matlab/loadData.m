@@ -34,20 +34,19 @@ indOutliers = subset(reject.histograms, numOutliers);
 train.names = data.names(indTargets);
 train.histograms = double(data.histograms(:,indTargets)');
 train.labels = ones(numTargets, 1);
-fprintf('Number of training images: %d\n', size(train.histograms, 1));
+fprintf('Number of training images: %d targets\n', size(train.histograms, 1));
 
 % validation data (target and rejection classes)
 val.names = [data.names(~indTargets); reject.names(indOutliers)];
 val.histograms = double([data.histograms(:, ~indTargets) reject.histograms(:, indOutliers)]');
 val.labels = [ones(len-numTargets, 1); -ones(numOutliers, 1)];
-fprintf('Number of validation images: %d positive, %d negative\n', ...
+fprintf('Number of validation images: %d targets, %d outliers\n', ...
         sum(val.labels > 0), sum(val.labels < 0));
-end
+
 
 function ind = subset(data, len)
 % SUBSET  Return a subset of LEN rows of the input DATA.
-    n = size(data, 2);
-    ind = zeros(1, n);
-    ind(sort(randperm(n, len))) = 1;
-    ind = logical(ind);
-end
+n = size(data, 2);
+ind = zeros(1, n);
+ind(sort(randperm(n, len))) = 1;
+ind = logical(ind);
