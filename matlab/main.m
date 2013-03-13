@@ -20,9 +20,9 @@ for class = { 'animal', 'cellphone', 'face', 'person' }
     end
 
     % repeat N times and get average results
-    N = 10;
+    N = 20;
     results = cell(N,1);
-    for i = 1:N
+    parfor i = 1:N
         fprintf(' * Classifying images in class "%s" (%d/%d)\n', classname, i, N)
         results{i} = classify(train, test, @chi2expKernel);
     end
