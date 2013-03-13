@@ -8,6 +8,9 @@ function results = classify(train, test, kernel, varargin)
 %
 %   The function accepts the following options:
 %
+%   Verbose:: [false]
+%     Print verbose messages.
+%
 %   TrainRank:: [false]
 %     Display the ranked list of a subset of the train images.
 %
@@ -27,12 +30,15 @@ function results = classify(train, test, kernel, varargin)
 
 % Author: Paolo D'Apice
 
+opts.verbose    = false;
 opts.trainRank  = false;
 opts.trainPC    = false;
 opts.trainStats = false;
 opts.testRank   = false;
 opts.testPC     = false;
 opts = vl_argparse(opts, varargin);
+
+if opts.verbose, print = @fprintf; else print = @nop; end
 
 %% Train a classifier
 
@@ -57,9 +63,9 @@ end
 % stats on results
 if opts.trainStats
     [~, ~, info] = vl_pr(train.labels, scores);
-    fprintf('Train AP: %.2f\n', info.auc);
+    print('Train AP: %.2f\n', info.auc);
 
-    fprintf(' === Training results ===\n');
+    print(' === Training results ===\n');
     stats(predictedLabels, train.labels);
 end
 
@@ -81,13 +87,16 @@ end
 
 % stats on results
 [~, ~, info] = vl_pr(test.labels, scores);
-fprintf('Test AP: %.2f\n', info.auc);
+print('Test AP: %.2f\n', info.auc);
 
 results = stats(predictedLabels, test.labels);
 
-%fprintf('\nConfusion matrix:\n'),
+%print('\nConfusion matrix:\n'),
 %disp(confusionmat(test.labels, predictedLabels, 'order', [1 -1])')
 
 [~, perm] = sort(scores, 'descend');
 topK = 36;
-fprintf('Correctly retrieved in the top %d: %d\n\n', topK, sum(test.labels(perm(1:topK)) > 0));
+print('Correctly retrieved in the top %d: %d\n\n', topK, sum(test.labels(perm(1:topK)) > 0));
+
+function nop(varargin)
+% NOP Does nothing
