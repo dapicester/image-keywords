@@ -47,7 +47,7 @@ model = trainOneSVM(train.labels, train.khistograms);
 % visualize the ranked list of images
 if opts.trainRank
     figure(1), clf, set(1, 'name', 'Ranked training images (subset)');
-    displayRankedImageList(class, train.names, scores(1:length(train.names)));
+    displayRankedImageList(train.names, scores);
 end
 
 % stats on results
@@ -63,7 +63,7 @@ end
 % visualize the ranked list of images
 if opts.testRank
     figure(3), clf, set(3, 'name', 'Ranked testing images (subset)');
-    displayRankedImageList(class, test.names, scores(1:length(test.names)));
+    displayRankedImageList(test.names, scores);
 end
 
 % visualize the precision-recall curve
