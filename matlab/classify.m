@@ -17,9 +17,6 @@ function results = classify(train, test, kernel, varargin)
 %   TestRank:: [false]
 %     Display the ranked list of a subset of the test images.
 %
-%   TrainPC:: [false]
-%     Display the train Precision-Recall curve.
-%
 %   TestPC:: [false]
 %     Display the test Precision-Recall curve.
 %
@@ -32,7 +29,6 @@ function results = classify(train, test, kernel, varargin)
 
 opts.verbose    = false;
 opts.trainRank  = false;
-opts.trainPC    = false;
 opts.trainStats = false;
 opts.testRank   = false;
 opts.testPC     = false;
@@ -54,19 +50,10 @@ if opts.trainRank
     displayRankedImageList(class, train.names, scores(1:length(train.names)));
 end
 
-% visualize the precision-recall curve
-if opts.trainPC
-    figure(2), clf, set(2, 'name', 'Precision-recall on train data');
-    vl_pr(train.labels, scores);
-end
-
 % stats on results
 if opts.trainStats
-    [~, ~, info] = vl_pr(train.labels, scores);
-    print('Train AP: %.2f\n', info.auc);
-
     print(' === Training results ===\n');
-    stats(predictedLabels, train.labels);
+    stats(predictedLabels, train.labels, 'print', true);
 end
 
 %% Classify test images and assess performance
@@ -98,5 +85,6 @@ results = stats(predictedLabels, test.labels);
 topK = 36;
 print('Correctly retrieved in the top %d: %d\n\n', topK, sum(test.labels(perm(1:topK)) > 0));
 
+
 function nop(varargin)
-% NOP Does nothing
+% NOP  Does nothing.
