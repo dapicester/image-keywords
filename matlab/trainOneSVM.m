@@ -1,16 +1,18 @@
 function model = trainOneSVM(labels, data, varargin)
 % TRAINONESVM  Train a one-class SVM using LIBSVM with precomputed kernels.
-%   MODEL = TRAINONESVM(LABELS, DATA)
-%   MODEL = TRAINONESVM(LABELS, DATA, 'libsvm options')
+%   Default options are '-s 2 -t 4', any specified option will be appended.
 %
-% See also SVMTRAIN()
+%   MODEL = TRAINONESVM(LABELS, DATA)
+%   MODEL = TRAINONESVM(..., 'libsvm options')
+%
+% See also SVMTRAIN() in LIBSVM.
 
 % Author: Paolo D'Apice
 
-options = '-s 2 -t 4 -q';
+options = '-s 2 -t 4 ';
 
 if nargin == 3
-    options = varargin{1};
+    options = [options varargin{1}];
 end
 
 model = svmtrain(labels, data, options);

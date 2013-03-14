@@ -39,10 +39,10 @@ if opts.verbose, print = @fprintf; else print = @nop; end
 %% Train a classifier
 
 [train.khistograms, test.khistograms] = precomputeKernel(kernel, train.histograms, test.histograms);
-model = trainOneSVM(train.labels, train.khistograms);
+model = trainOneSVM(train.labels, train.khistograms, '-q');
 
 % evaluate on training data
-[predictedLabels, ~, scores] = predictSVM(train.labels, train.khistograms, model);
+[predictedLabels, ~, scores] = predictSVM(train.labels, train.khistograms, model, '-q');
 
 % visualize the ranked list of images
 if opts.trainRank
@@ -58,7 +58,7 @@ end
 
 %% Classify test images and assess performance
 
-[predictedLabels, ~, scores] = predictSVM(test.labels, test.khistograms, model);
+[predictedLabels, ~, scores] = predictSVM(test.labels, test.khistograms, model, '-q');
 
 % visualize the ranked list of images
 if opts.testRank

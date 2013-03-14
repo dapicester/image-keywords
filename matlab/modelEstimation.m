@@ -40,19 +40,20 @@ disp('Fine grid parameters:'), disp(params2)
 
 if params2.bestobj < params.bestobj
     disp('Using fine grid parameters:')
-    n = params2.bestn;
+    n = params2.bestn %#ok<NOPRT>
 else
-    n = params.bestn;
+    disp('Using coarse grid parameters:')
+    n = params.bestn %#ok<NOPRT>
 end
-fprintf(' n = %g\n', n);
+
 disp('Press a key to test'), pause
 
 %% Test
 
 [train.khistograms, test.khistograms] = precomputeKernel(kernel, train.histograms, test.histograms);
-options = [ '-s 2 -t 4 -q -n ', num2str(n) ]; %, ' -g ', num2str(2^log2g)];
-model = svmtrain(train.labels, train.khistograms, options);
-predictedLabels = svmpredict(test.labels, test.khistograms, model);
+options = [ '-q -n ', num2str(n) ]; %, ' -g ', num2str(2^log2g)];
+model = trainOneSVM(train.labels, train.khistograms, options);
+predictedLabels = predictSVM(test.labels, test.khistograms, model, '-q');
 stats(predictedLabels, test.labels, 'plot', true, 'print', true);
 
 

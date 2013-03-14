@@ -29,11 +29,11 @@ train = precomputeKernel(kernel, data);
 
 for n = opts.n
         % train model
-        options = [ '-s 2 -t 4 -q -n ', num2str(n) ]; %, ' -g ', num2str(2^log2g)];
+        options = [ '-q -n ', num2str(n) ]; %, ' -g ', num2str(2^log2g)];
         model = trainOneSVM(labels, train, options);
 
         % compute objective function
-        predicted = predictSVM(labels, train, model);
+        predicted = predictSVM(labels, train, model, '-q');
         fsv = model.totalSV / numVectors;
         fout = numel(find(predicted == -1)) / numVectors;
         obj = objective(n, fsv, fout);

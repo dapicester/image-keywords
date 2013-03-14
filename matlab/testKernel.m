@@ -25,8 +25,8 @@ for class = { 'animal', 'cellphone', 'face', 'person' }
         kernel = k{1};
         fprintf(' - %s:\n', func2str(kernel));
         [train2, test2] = precomputeKernel(kernel, train.histograms, test.histograms);
-        model = trainOneSVM(train.labels, train2);
-        pred = predictSVM(test.labels, test2, model);
+        model = trainOneSVM(train.labels, train2, '-q');
+        pred = predictSVM(test.labels, test2, model, '-q');
         stats(pred, test.labels, 'plot', true, 'print', true); 
         disp('Press a key to continue with next kernel'), pause
     end
