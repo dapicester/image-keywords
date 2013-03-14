@@ -8,21 +8,23 @@ setup
 for class = { 'animal', 'cellphone', 'face', 'person' }
     classname = char(class);
     
-    % load data
-    fprintf(' * Loading data for class "%s"\n', classname);
-    [train,test] = loadData(classname);
-
-    % scaling data (optional)
-    if SCALING
-        fprintf('Scaling data\n')
-        [train.histograms, ranges] = svmScale(train.histograms);
-        test.histograms = svmScale(test.histograms, 'ranges', ranges);
-    end
-
     % repeat N times and get average results
     N = 20;
     results = cell(N,1);
     parfor i = 1:N
+        % load data
+        fprintf(' * Loading data for class "%s"\n', classname);
+        % use explicit dataDir because in parfor
+        [train,test] = loadData(classname, 'dataDir', DATA_DIR);
+
+        % scaling data (optional)
+        if SCALING
+            fprintf('Scaling data\n')
+            [train.histograms, ranges] = svmScale(train.histograms);
+            test.histograms = svmScale(test.histograms, 'ranges', ranges);
+        end
+
+        % classify
         fprintf(' * Classifying images in class "%s" (%d/%d)\n', classname, i, N)
         results{i} = classify(train, test, @chi2expKernel);
     end
