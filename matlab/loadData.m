@@ -1,25 +1,37 @@
 function [train, val] = loadData(class, varargin)
 % LOADDATA  Load training and validation data.
+%
 %   [TRAIN, VAL] = LOADDATA(CLASS) Load training and validation data 
 %   for the given CLASS.
-%   
-%   Use LOADDATA(..., 'ratio', R) for overriding the default ratio of 0.75
-%   (i.e. 75% of target pictures for training and 25% for validation).
-%   Use LOADDATA(..., 'outliers', O) for specify the ratio between outliers 
-%   and targets in the validation set (by default the number of outliers is
-%   equal to the number of targets. i.e. ratio equals to 1).
+%
+%   The function accepts the following options:
+%
+%   Ratio:: [0.75]
+%     Define the ratio of training data. By default 75% of data is put in
+%     the train data set and the remainder 25% is used for validation.
+%
+%   Outliers:: [1]
+%     Define the ratio between outliers and targets in the validation 
+%     data set. By default the number of outliers is equal to the number
+%     of targets.
+%
+%   DataDir:: [DATA_DIR]
+%     The directory containing the saved data. Default is defined by global
+%     variable but it cannot be accessed in parfors so it must be
+%     explicitely specified.
 
 % Author: Paolo D'Apice
 
-opts.ratio = 0.75;
-opts.outliers = 1;
-opts = vl_argparse(opts, varargin);
-
 global DATA_DIR
 
+opts.ratio = 0.75;
+opts.outliers = 1;
+opts.dataDir = DATA_DIR;
+opts = vl_argparse(opts, varargin);
+
 % load data
-data = load(fullfile(DATA_DIR, [class '_hist.mat']));
-reject = load(fullfile(DATA_DIR, [class '_reject_hist.mat']));
+data = load(fullfile(opts.dataDir, [class '_hist.mat']));
+reject = load(fullfile(opts.dataDir, [class '_reject_hist.mat']));
 
 len = size(data.histograms, 2);
 numTargets = round(len * opts.ratio);
