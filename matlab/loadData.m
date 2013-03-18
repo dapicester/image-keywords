@@ -34,8 +34,8 @@ data = load(fullfile(opts.dataDir, [class '_hist.mat']));
 reject = load(fullfile(opts.dataDir, [class '_reject_hist.mat']));
 
 len = size(data.histograms, 2);
-numTargets = round(len * opts.ratio);
-numOutliers = round((len - numTargets) * opts.outliers);
+numTargets = floor(len * opts.ratio);
+numOutliers = floor((len - numTargets) * opts.outliers);
 
 indTargets = subset(data.histograms, numTargets);
 indOutliers = subset(reject.histograms, numOutliers);
