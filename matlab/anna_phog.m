@@ -123,7 +123,7 @@ for l = 0:L
     end
 end
 % normalize to 1
-p = p/sum(p);
+p = single(p/sum(p));
 
 
 function p = histogram(bh, bv, bin)
@@ -132,5 +132,5 @@ p = zeros(bin, 1);
 for b = 1:bin
     p(b) = sum(bv(bh == b));
 end
-p = p./(sum(p)+eps);
+p = single(p./(sum(p)+eps));
 

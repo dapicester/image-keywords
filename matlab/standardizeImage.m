@@ -10,7 +10,12 @@ HEIGHT = 480;
 
 % TODO: ensure it is a JPEG in RGB colorspace
 
-im = im2single(im);
+% single precision
+if ~isa(im, 'single')
+    im = im2single(im);
+end
+
+% max size
 if size(im,1) > HEIGHT
     im = imresize(im, [HEIGHT NaN]);
 end
