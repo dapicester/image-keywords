@@ -127,9 +127,10 @@ p = p/sum(p);
 
 
 function p = histogram(bh, bv, bin)
-% HISTOGRAM  Compute histogram
+% HISTOGRAM  Compute normalized histogram.
 p = zeros(bin, 1);
 for b = 1:bin
     p(b) = sum(bv(bh == b));
 end
+p = p./(sum(p)+eps);
 
