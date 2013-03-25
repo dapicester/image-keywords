@@ -11,22 +11,25 @@ DATA_DIR = fullfile(ROOT_DIR, 'data');
 % LIBSVM
 fprintf('- LIBSVM ... ');
 if exist('svmtrain', 'file') ~= 3
-    addpath(fullfile(ROOT_DIR, 'dependencies', 'libsvm-3.16', 'matlab'));
-    fprintf('found, ');
+    error('cannot find LIBSVM');
 end
 fprintf('ok\n');
 
 % VLFfeat
 fprintf('- VLFeat ... ');
 if exist('vl_version', 'file') ~= 3
-    run(fullfile(ROOT_DIR, 'dependencies', 'vlfeat-0.9.16', 'toolbox', 'vl_setup'));
-    fprintf('found, ');
+    error('cannot find VLFeat');
 end
 fprintf('ok\n');
 
 % Parallel computing
-if exist('matlabpool', 'file') == 2 && matlabpool('size') == 0
+fprintf('- Matlab workers pool ... ')
+if exist('matlabpool', 'file') == 0
+    fprintf('no\n');
+elseif exist('matlabpool', 'file') == 2 && matlabpool('size') == 0
     matlabpool('open')
+else
+    fprintf('ok\n');
 end
 
 fprintf('Setting variables:\n');
