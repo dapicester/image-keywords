@@ -27,8 +27,8 @@ for i = 1:length(opts.tiles)
                    binsy, binsx, words);
     htile = zeros(dim(2) * dim(1) * numWords, 1);
     htile = vl_binsum(htile, ones(size(bins)), bins);
-    htiles{i} = single(htile / sum(htile));
+    htiles{i} = single(htile / (sum(htile) + eps));
 end
 
 histogram = cat(1, htiles{:});
-histogram = single(histogram / sum(histogram));
+histogram = single(histogram / sum(histogram))';
