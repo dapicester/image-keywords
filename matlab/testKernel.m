@@ -9,7 +9,7 @@ for class = { 'animal', 'cellphone', 'face', 'person' }
     classname = char(class);
     
     fprintf('* Class "%s"\n', classname);
-    [train, test] = loadData(classname);
+    [train, test] = loadData(classname, 'descriptors', 'both');
 
     if SCALING
         [train.histograms, ranges] = svmScale(train.histograms);

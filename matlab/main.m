@@ -15,7 +15,7 @@ for class = { 'animal', 'cellphone', 'face', 'person' }
         % load data
         fprintf(' * Loading data for class "%s"\n', classname);
         % use explicit dataDir because in parfor
-        [train,test] = loadData(classname, 'dataDir', DATA_DIR);
+        [train,test] = loadData(classname, 'dataDir', DATA_DIR, 'descriptors', 'both');
 
         % scaling data (optional)
         if SCALING

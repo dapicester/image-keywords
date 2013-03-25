@@ -9,7 +9,7 @@ global SCALING
 
 fprintf('Model estimation for class "%s"\n\n', class)
 
-[train, test] = loadData(class);
+[train, test] = loadData(class, 'descriptors', 'both');
 
 if SCALING
     fprintf('Scaling data\n')
