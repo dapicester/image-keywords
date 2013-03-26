@@ -1,4 +1,4 @@
-function vocabulary = computeVocabularyFromImageList(class, names)
+function vocabulary = computeVocabularyFromImageList(class, names, varargin)
 % COMPUTEVOCABULARYFROMIMAGELIST  Compute a visual word vocabulary.
 %   VOCABULARY = COMPUTEVOCABULARYFROMIMAGELIST('CLASS', NAMES) computes a
 %   visual word vocabulary from a list of image names (paths) NAMES
@@ -8,12 +8,17 @@ function vocabulary = computeVocabularyFromImageList(class, names)
 %     WORDS:: 128 x K matrix of visual word centers.
 %     KDTREE:: KD-tree indexing the visual word for fast quantization.
 %     CLASS:: the class name.
+%
+%   The function accepts the following options:
+%
+%   NumWords:: [1000]
+%     The number of visual words.
 
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
-numWords = 200;
-numFeatures = numWords * 100;
+conf.numWords = 1000;
+conf = vl_argparse(conf, varargin);
 
 % This extracts a number of visual descriptors from the specified images. 
 % Only NUMFEATURES overall descriptors are retrieved as more do not really
@@ -21,20 +26,21 @@ numFeatures = numWords * 100;
 
 len = numel(names);
 descriptors = cell(1, len);
+numFeatures = round(conf.numWords * 100 / len);
 parfor i = 1:len
     fullPath = names{i};
     fprintf('  Extracting features from %s (%d/%d)\n', fullPath, i, len);
     im = imread(fullPath);
     [~, d] = computeFeatures(im);
-    descriptors{i} = vl_colsubset(d, round(numFeatures / len), 'uniform');
+    descriptors{i} = vl_colsubset(d, numFeatures, 'uniform');
 end
 
 % This clusters the descriptors into NUMWORDS visual words by using KMEANS.
-% It then compute a KDTREE to index them. 
+% It then computes a KDTREE to index them. 
 % The use of a KDTREE is optional, but speeds-up quantization significantly.
 
 fprintf('Computing visual words and kdtree ...\n');
 descriptors = single([descriptors{:}]);
-vocabulary.words = vl_kmeans(descriptors, numWords, 'algorithm', 'elkan', 'verbose');
+vocabulary.words = vl_kmeans(descriptors, conf.numWords, 'algorithm', 'elkan', 'verbose');
 vocabulary.kdtree = vl_kdtreebuild(vocabulary.words, 'verbose');
 vocabulary.class = class;

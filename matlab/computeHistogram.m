@@ -1,13 +1,15 @@
 function histogram = computeHistogram(width, height, keypoints, words, numWords, varargin)
 % COMPUTEHISTOGRAM  Compute a spatial histogram of visual words.
+%
 %   HISTOGRAM = COMPUTEHISTOGRAM(WIDTH, HEIGHT, KEYPOINTS, WORDS, NUMWORDS)
 %   computes a RxC spatial histogram of the N visual words WORDS.
 %   KEYPOINTS is a 2 x N matrix of x,y coordinates of the
 %   visual words and WIDTH and HEIGHT are the image dimensions; these
 %   quantities are needed for the geometric tiling.
 %   By default the spatial histogram is computed on a 2x2 tile
-%   grid using NUMWORDS words.  Use COMPUTEHISTOGRAM(..., 'tiles', CELL) 
-%   to override default value of {[1 1]} (no tiles).
+%   grid using NUMWORDS words.  
+%   Use COMPUTEHISTOGRAM(..., 'tiles', CELL) to override default value 
+%   of {[2 2]}.
 %
 %   Example: 
 %     histogram = COMPUTEHISTOGRAM(..., 'tiles', { [1 1] [2 2] [3 1] });
