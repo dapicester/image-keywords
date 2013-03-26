@@ -1,6 +1,8 @@
 *~
+*.mat
 data/*
 !data/*.txt
+!data/test?
 dependencies/*
 !dependencies/libsvm-3.16.tar.gz
 !dependencies/vlfeat-0.9.16-bin.tar.gz

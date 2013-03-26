@@ -10,7 +10,10 @@ function vocabulary = buildVocabulary(class, varargin)
 %   The function accepts the following options:
 %
 %   DataDir:: [global DATA_DIR]
-%     The directory containing files.
+%     The directory containing image files.
+%
+%   SaveDir:: [global DATA_DIR]
+%     The directory containing the dictionary.
 %
 %   Force:: [true]
 %     Build the vocabulary even if it already exists.
@@ -24,23 +27,24 @@ function vocabulary = buildVocabulary(class, varargin)
 global DATA_DIR
 
 conf.dataDir = DATA_DIR;
-conf.force = true;
+conf.saveDir = DATA_DIR;
+conf.force = false;
 conf.numImages = 50;
 conf = vl_argparse(conf, varargin);
 
 if ischar(class)
     % one class
-    vocabularyFile = fullfile(conf.dataDir, ['vocabulary_' class '.mat']);
-    vocabulary = loadOrBuildVocabulary(class, vocabularyFile, ...
+    vocabularyFile = fullfile(conf.saveDir, ['vocabulary_' class '.mat']);
+    vocabulary = loadOrBuildVocabulary(vocabularyFile, ...
                                        conf.numImages);
 else
     % multi-class
-    vocabularyFile = fullfile(conf.dataDir, 'vocabulary.mat');
-    vocabulary = loadOrBuildVocabulary(class, vocabularyFile, ...
+    vocabularyFile = fullfile(conf.saveDir, 'vocabulary.mat');
+    vocabulary = loadOrBuildVocabulary(vocabularyFile, ...
                                        conf.numImages * numel(class));
 end
 
-function vocabulary = loadOrBuildVocabulary(class, vocabularyFile, numImages)
+function vocabulary = loadOrBuildVocabulary(vocabularyFile, numImages)
 % LOADORBUILDVOCABULARY  Actually load or compute the visual words vocabulary.
     if conf.force || ~exist(vocabularyFile, 'file')
         % load image file names
