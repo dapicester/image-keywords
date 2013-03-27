@@ -1,6 +1,7 @@
-function out = chi2expKernel(x, y, varargin)
-% CHI2KERNEL  Compute the exponential chi-square kernel.
-%   OUT = CHI2KERNEL(X,Y)  Compute the exponential chi-square kernel defined as:
+function out = chi2exp(x, y, varargin)
+% KERNEL.CHI2EXP  Compute the exponential chi-square kernel.
+%   OUT = KERNEL.CHI2EXP(X,Y)  Compute the exponential chi-square kernel
+%   defined as:
 %
 %      K(X,Y) = exp(-gamma * chi2(X, Y))
 %
@@ -9,7 +10,7 @@ function out = chi2expKernel(x, y, varargin)
 %      chi2(X,Y) =  Sum -------------
 %                    i   (x_i + y_i)
 % 
-%   Use CHI2KERNEL(..., GAMMA) to override the default value of
+%   Use KERNEL.CHI2EXP(..., GAMMA) to override the default value of
 %   1/num_features.
 
 % Author: Paolo D'Apice

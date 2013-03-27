@@ -76,7 +76,7 @@ for class = classes
     for i = 1:N
         % classify
         fprintf('a. Classifying images in class "%s" (%d/%d)\n', classname, i, N)
-        results{i} = classify(datasets.train(i), datasets.val(i), @linearKernel);
+        results{i} = classify(datasets.train(i), datasets.val(i), @kernel.linear);
     end
     results = struct2dataset(cell2mat(results));
     results_a(classname) = showResults(classname, results, 'summary', false);
@@ -94,7 +94,7 @@ for class = classes
     for i = 1:N
         % classify
         fprintf('b. Classifying images in class "%s" (%d/%d)\n', classname, i, N)
-        results{i} = classify(datasets.train(i), datasets.val(i), @linearKernel);
+        results{i} = classify(datasets.train(i), datasets.val(i), @kernel.linear);
     end
     results = struct2dataset(cell2mat(results));
     results_b(classname) = showResults(classname, results, 'summary', false);
