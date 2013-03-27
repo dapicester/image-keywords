@@ -1,12 +1,13 @@
-function [scaled, ranges] = svmScale(input, varargin)
-% SVMSCALE Scale data for use with LIBSVM.
+function [scaled, ranges] = scaleData(input, varargin)
+% SVM.SCALEDATA Scale data for use with LIBSVM.
 % 
-%   [SCALED, RANGES] = SVMSCALE(INPUT)  Scale input data to a restricted
-%   range. Use SVMSCALE(..., 'lower') or SVMSCALE(..., L, 'upper', U) 
+%   [SCALED, RANGES] = SVM.SCALEDATA(INPUT)  Scale input data to a 
+%   restricted range. 
+%   Use SVM.SCALEDATA(..., 'lower') or SVM.SCALEDATA(..., L, 'upper', U) 
 %   to override the default range [0, 1].   
 %
-%   SCALED = svmScale(INPUT, 'ranges', RANGES) Scale input data according to 
-%   the given ranges.
+%   SCALED = SVM.SCALEDATA(INPUT, 'ranges', RANGES) Scale input data 
+%   according to the given ranges.
 
 % Author: Paolo D'Apice
 
