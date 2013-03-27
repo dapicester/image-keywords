@@ -34,8 +34,8 @@ opts.descriptors = 'both';
 opts = vl_argparse(opts, varargin);
 
 % load data
-data = load(fullfile(opts.dataDir, [class '_hist.mat']));
-reject = load(fullfile(opts.dataDir, [class '_reject_hist.mat']));
+data = loadFile(fullfile(opts.dataDir, [class '_hist.mat']));
+reject = loadFile(fullfile(opts.dataDir, [class '_reject_hist.mat']));
 
 len = size(data.histograms, 2);
 numTargets = floor(len * opts.ratio);
@@ -83,3 +83,8 @@ switch sel
         out = [cat(1, phow{:}), cat(1, phog{:})];
 end
 
+
+function data = loadFile(filename)
+% LOADFILE  Load data from file.
+if ~exist(filename, 'file'), error('%s: does not exist', filename), end
+data = load(filename);
