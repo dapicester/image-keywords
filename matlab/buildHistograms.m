@@ -17,6 +17,10 @@ function histograms = buildHistograms(class, vocabulary, varargin)
 %
 %   Reject:: [false]
 %     Compute histograms on outliers.
+%
+%   Descriptors:: ['both']
+%     Extracts only PHOG if set to 'phog', only PHOW if set to 'phow' 
+%     otherwise extracts both.
 
 % Author: Paolo D'Apice
 
@@ -26,7 +30,7 @@ conf.dataDir = DATA_DIR;
 conf.saveDir = DATA_DIR;
 conf.force = false;
 conf.reject = false;
-conf = vl_argparse(conf, varargin);
+[conf, varargin] = vl_argparse(conf, varargin);
 
 if conf.reject
     filename = fullfile(conf.saveDir, [class '_reject_hist.mat']);
@@ -52,7 +56,7 @@ end
 
 function histograms = compute(class)
     names = readFileNames(class, conf.dataDir);
-    histograms = computeHistogramsFromImageList(vocabulary, names);
+    histograms = computeHistogramsFromImageList(vocabulary, names, varargin{:});
 end % compute
 
 end % buildHistograms

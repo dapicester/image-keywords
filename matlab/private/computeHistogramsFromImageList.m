@@ -10,11 +10,20 @@ function histograms = computeHistogramsFromImageList(vocabulary, names, varargin
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
+conf.descriptors = 0;
+conf = vl_argparse(conf, varargin);
+
+switch conf.descriptors
+    case 'phog', opts = { 'phow', false };
+    case 'phow', opts = { 'phog', false };
+    otherwise,   opts = {};
+end
+
 len = numel(names);
 histograms = cell(1, len);
 parfor i = 1:len
     fullPath = names{i};
     fprintf('  Extracting histograms from %s (%d/%d)\n', fullPath, i, len);
-    histograms{i} = computeHistogramFromImage(vocabulary, fullPath);
+    histograms{i} = computeHistogramFromImage(vocabulary, fullPath, opts{:});
 end
 histograms = [histograms{:}];

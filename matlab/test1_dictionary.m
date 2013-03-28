@@ -21,8 +21,8 @@ N = 10;
 for class = classes
     classname = char(class);
     vocabulary = buildVocabulary(classname, 'saveDir', dir_a);
-    buildHistograms(classname, vocabulary, 'saveDir', dir_a);
-    buildHistograms(classname, vocabulary, 'reject', true, 'saveDir', dir_a);
+    buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'saveDir', dir_a);
+    buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'reject', true, 'saveDir', dir_a);
 end
 clear class classname vocabulary
 
@@ -31,8 +31,8 @@ clear class classname vocabulary
 vocabulary = buildVocabulary(classes, 'saveDir', dir_b);
 for class = classes
     classname = char(class);
-    buildHistograms(classname, vocabulary, 'saveDir', dir_b);
-    buildHistograms(classname, vocabulary, 'reject', true, 'saveDir', dir_b);
+    buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'saveDir', dir_b);
+    buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'reject', true, 'saveDir', dir_b);
 end
 clear class classname vocabulary
 

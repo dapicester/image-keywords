@@ -16,7 +16,8 @@ function [train, val] = loadData(class, varargin)
 %     of targets.
 %
 %   Descriptors::
-%     Use 'phow', 'phog' or 'both'. Defaults to use both descriptors.
+%     Use 'phow', 'phog' or 'both'. Defaults to use both descriptors
+%     if available.
 %
 %   DataDir:: [DATA_DIR]
 %     The directory containing the saved data. Default is defined by global
@@ -47,19 +48,44 @@ indOutliers = subset(reject.histograms, numOutliers);
 % training data (targets)
 train.class = class;
 train.names = data.names(indTargets);
-train.histograms = double(descriptors(data.histograms(indTargets), opts.descriptors));
+train.histograms = double(descriptors(data.histograms(indTargets)));
 train.labels = ones(numTargets, 1);
 fprintf('Number of training images: %d targets\n', size(train.histograms, 1));
 
 % validation data (targets and outliers)
 val.class = class;
 val.names = [data.names(~indTargets); reject.names(indOutliers)];
-val.histograms = double([descriptors(data.histograms(~indTargets), opts.descriptors); ...
-                         descriptors(reject.histograms(indOutliers), opts.descriptors)]);
+val.histograms = double([descriptors(data.histograms(~indTargets)); ...
+                         descriptors(reject.histograms(indOutliers)) ]);
 val.labels = [ones(len-numTargets, 1); -ones(numOutliers, 1)];
 fprintf('Number of validation images: %d targets, %d outliers\n', ...
         sum(val.labels > 0), sum(val.labels < 0));
 
+
+function out = descriptors(data)
+% DESCRIPTORS  Choose the descriptors.
+    values = struct2cell(data);
+    % only one descriptors has been computed
+    if size(data,1) == 1
+        out = cat(1, values{:});
+        return
+    end
+    % both available, select
+    switch opts.descriptors
+        case 'phow', 
+            phow = values(1,:,:);
+            out = cat(1, phow{:});
+        case 'phog'
+            phog = values(2,:,:);
+            out = cat(1, phog{:});
+        otherwise
+            phow = values(1,:,:);
+            phog = values(2,:,:);
+            out = [cat(1, phow{:}), cat(1, phog{:})];
+    end
+end % descriptors
+
+end % loadData
 
 function ind = subset(data, len)
 % SUBSET  Return a subset of LEN rows of the input DATA.
@@ -67,20 +93,6 @@ n = size(data, 2);
 ind = zeros(1, n);
 ind(sort(randperm(n, len))) = 1;
 ind = logical(ind);
-
-
-function out = descriptors(data, sel)
-% DESCRIPTORS  Choose the descriptors.
-values = struct2cell(data);
-phow = values(1,:,:);
-phog = values(2,:,:);
-switch sel
-    case 'phow'
-        out = cat(1, phow{:});
-    case 'phog'
-        out = cat(1, phog{:});
-    otherwise
-        out = [cat(1, phow{:}), cat(1, phog{:})];
 end
 
 
@@ -88,3 +100,4 @@ function data = loadFile(filename)
 % LOADFILE  Load data from file.
 if ~exist(filename, 'file'), error('%s: does not exist', filename), end
 data = load(filename);
+end
