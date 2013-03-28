@@ -11,13 +11,13 @@ function vocabulary = computeVocabularyFromImageList(class, names, varargin)
 %
 %   The function accepts the following options:
 %
-%   NumWords:: [1000]
+%   NumWords:: [300]
 %     The number of visual words.
 
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
-conf.numWords = 1000;
+conf.numWords = 300;
 conf = vl_argparse(conf, varargin);
 
 % This extracts a number of visual descriptors from the specified images. 
