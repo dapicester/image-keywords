@@ -10,48 +10,11 @@ function histograms = computeHistogramsFromImageList(vocabulary, names, varargin
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
-useCache = length(varargin) > 1;
-if useCache
-    cache = varargin{1};
-else
-    cache = [];
-end
-
 len = numel(names);
 histograms = cell(1, len);
 parfor i = 1:len
     fullPath = names{i};
-    if useCache
-        % try to retrieve from cache
-        histograms{i} = getFromCache(fullPath);
-        if ~isempty(histograms{i})
-            continue
-        end
-    end
     fprintf('  Extracting histograms from %s (%d/%d)\n', fullPath, i, len);
     histograms{i} = computeHistogramFromImage(vocabulary, fullPath);
-    if useCache
-        % save to cache
-        storeToCache(fullPath, cache, histograms{i});
-    end
 end
 histograms = [histograms{:}];
-
-
-function histogram = getFromCache(fullPath, cache)
-[~, name] = fileparts(fullPath);
-cachePath = fullfile(cache, [name '.mat']);
-if exist(cachePath, 'file')
-    data = load(cachePath);
-    histogram = data.histogram;
-else
-    histogram = [];
-end
-
-
-function storeToCache(fullPath, cache, histogram)
-[~, name] = fileparts(fullPath);
-cachePath = fullfile(cache, [name '.mat']);
-vl_xmkdir(cache);
-data.histogram = histogram; %#ok<STRNU>
-save(cachePath, '-struct', 'data');
