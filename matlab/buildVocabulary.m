@@ -21,6 +21,10 @@ function vocabulary = buildVocabulary(class, varargin)
 %   NumImages:: [50]
 %     Build the vocabulary using only a subset of all the available images
 %     for each class;
+%
+%   NumWords:: [300]
+%     The number of visual words.
+
 
 % Author: Paolo D'Apice
 
@@ -30,6 +34,7 @@ conf.dataDir = DATA_DIR;
 conf.saveDir = DATA_DIR;
 conf.force = false;
 conf.numImages = 50;
+conf.numWords = 300;
 conf = vl_argparse(conf, varargin);
 
 if ischar(class)
@@ -52,7 +57,8 @@ function vocabulary = loadOrBuildVocabulary(vocabularyFile, numImages)
 
         % Use only a (not small) subset of training images
         vocabulary = computeVocabularyFromImageList(class, ...
-                            vl_colsubset(names', numImages, 'uniform'));
+                            vl_colsubset(names', numImages, 'uniform'), ...
+                            conf.numWords);
         % save to file
         save(vocabularyFile, '-struct', 'vocabulary');
         fprintf('Vocabulary saved to %s.\n', vocabularyFile);

@@ -1,24 +1,16 @@
-function vocabulary = computeVocabularyFromImageList(class, names, varargin)
+function vocabulary = computeVocabularyFromImageList(class, names, numWords)
 % COMPUTEVOCABULARYFROMIMAGELIST  Compute a visual word vocabulary.
-%   VOCABULARY = COMPUTEVOCABULARYFROMIMAGELIST('CLASS', NAMES) computes a
-%   visual word vocabulary from a list of image names (paths) NAMES
-%   belonging to the class CLASS.
+%   VOCABULARY = COMPUTEVOCABULARYFROMIMAGELIST('CLASS', NAMES, NUMWORDS) 
+%   computes a visual word vocabulary from the list of image names (paths)
+%   NAMES belonging to the class CLASS.
 %
 %   VOCABULARY is a structure with fields:
 %     WORDS:: 128 x K matrix of visual word centers.
 %     KDTREE:: KD-tree indexing the visual word for fast quantization.
 %     CLASS:: the class name.
-%
-%   The function accepts the following options:
-%
-%   NumWords:: [300]
-%     The number of visual words.
 
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
-
-conf.numWords = 300;
-conf = vl_argparse(conf, varargin);
 
 % This extracts a number of visual descriptors from the specified images. 
 % Only NUMFEATURES overall descriptors are retrieved as more do not really
@@ -26,7 +18,7 @@ conf = vl_argparse(conf, varargin);
 
 len = numel(names);
 descriptors = cell(1, len);
-numFeatures = round(conf.numWords * 100 / len);
+numFeatures = round(numWords * 100 / len);
 parfor i = 1:len
     fullPath = names{i};
     fprintf('  Extracting features from %s (%d/%d)\n', fullPath, i, len);
@@ -41,6 +33,6 @@ end
 
 fprintf('Computing visual words and kdtree ...\n');
 descriptors = single([descriptors{:}]);
-vocabulary.words = vl_kmeans(descriptors, conf.numWords, 'algorithm', 'elkan', 'verbose');
+vocabulary.words = vl_kmeans(descriptors, numWords, 'algorithm', 'elkan', 'verbose');
 vocabulary.kdtree = vl_kdtreebuild(vocabulary.words, 'verbose');
 vocabulary.class = class;
