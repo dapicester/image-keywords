@@ -1,5 +1,6 @@
 *~
 *.mat
+*.eps
 data/*
 !data/*.txt
 !data/test?

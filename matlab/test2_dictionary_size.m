@@ -67,7 +67,7 @@ for i = 1:numDictionaries
         for j = 1:N
             % classify
             fprintf('%d. Classifying images in class "%s" (%d/%d)\n', i, classname, j, N)
-            res{j} = classify(dataset.train(j), dataset.val(j), @kernel.linear);
+            res{j} = test.classify(dataset.train(j), dataset.val(j));
         end
         res = struct2dataset(cell2mat(res));
         result(classname) = showResults(classname, res, 'summary', false);
@@ -91,17 +91,23 @@ for class = classes
     end
     subplot(2,3,n)
     bar(data,'hist')
+    ylim([0 1])
     title(classname, 'Interpreter', 'none')
-    legend({num2str(dictionarySize')})
+    legend({num2str(dictionarySize')}, 'Location', 'SouthEastOutside')
     set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
     n = n+1;
 end
+set(gcf, 'PaperPositionMode', 'auto')
+print('test2-all.eps', '-depsc2', '-f1')
 
 % global
 figure(2)
 bar(fscores, 'hist')
+ylim([0 1])
 title('F-score')
 legend({num2str(dictionarySize')})
 set(gca, 'XTickLabel', classes);
+set(gcf, 'PaperPositionMode', 'auto')
+print('test2-fscore.eps', '-depsc2', '-f2')
 
 clear n class classname data
