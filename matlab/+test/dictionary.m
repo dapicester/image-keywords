@@ -3,10 +3,12 @@ function [resultsA, resultsB] = dictionary(classname, dirA, dirB, numRun)
 
 % Author: Paolo D'Apice
 
-% a. per-class dictionary classification
+% a. per-class dictionary
+disp('Using per-class dictionary')
 datasetA = test.loadDatasets(classname, dirA, numRun);
 resultsA = test.runClassification(classname, datasetA, numRun);
 
-% b. global dictionary classification
+% b. global dictionary
+disp('Using global dictionary')
 datasetB = test.loadDatasets(classname, dirB, numRun);
 resultsB = test.runClassification(classname, datasetB, numRun);
