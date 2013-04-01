@@ -19,7 +19,7 @@ function histogram = computeHistogramFromImage(vocabulary, im, varargin)
 
 opts.phow = true;
 opts.phog = true;
-opts = vl_argparse(opts, varargin);
+[opts, varargin] = vl_argparse(opts, varargin);
 
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
@@ -36,7 +36,7 @@ if opts.phow
     [keypoints, descriptors] = computeFeatures(im);
     words = quantizeDescriptors(vocabulary, descriptors);
     numWords = size(vocabulary.words, 2);
-    histogram.words = computeHistogram(width, height, keypoints, words, numWords);
+    histogram.words = computeHistogram(width, height, keypoints, words, numWords, varargin{:});
 end
 
 % PHOW
