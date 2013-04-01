@@ -7,100 +7,86 @@ setup
 
 % image classes
 classes = { 'cellphone', 'face', 'person', 'shoes', 'standing_people' };
+numClasses = numel(classes);
 
 % dictionary sizes
 dictionarySize = [ 200 300 500 800 1000 2000 ];
 numDictionaries = numel(dictionarySize);
 
 % save data dirs
+testDir = fullfile(DATA_DIR, 'test2');
 dirs = cell(numDictionaries, 1);
 for i = 1:numDictionaries
-    dirs{i} = fullfile(DATA_DIR, 'test2', num2str(dictionarySize(i)));
+    dirs{i} = fullfile(testDir, num2str(dictionarySize(i)));
 end
 
 % number of executions
 N = 10;
 
-%% precompute dictionaries
+%% precompute dictionaries and histograms
 
 for i = 1:numDictionaries
     dir = char(dirs{i});
-    vocabulary = buildVocabulary(classes, 'numWords', dictionarySize(i), 'saveDir', dir);
+    vocabulary = buildVocabulary(classes, ...
+                                 'numWords', dictionarySize(i), ...
+                                 'saveDir', dir);
     for class = classes
         classname = char(class);
-        buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'saveDir', dir);
-        buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'reject', true, 'saveDir', dir);
+        buildHistograms(classname, vocabulary, ...
+                        'descriptors', 'phow', ...
+                        'saveDir', dir);
+        buildHistograms(classname, vocabulary, ...
+                        'descriptors', 'phow', ...
+                        'reject', true, ...
+                        'saveDir', dir);
     end
 end
 clear i dir class classname vocabulary
 
-%% load datasets
+%% do test
 
-datasets = cell(numDictionaries, 1);
-for i = 1:numDictionaries
-    dir = char(dirs{i});
-   
-    dataset = containers.Map;
-    for class = classes
-        classname = char(class);
+resultsFile = fullfile(testDir, 'results.mat');
 
-        % reset random because we want datasets to use the same images
-        rng(0);
-        for j = 1:N
-            [train(j), val(j)] = loadData(classname, 'datadir', dir);
-        end
-        dataset(classname) = struct('train', train, 'val', val);
-    end  
-    datasets{i} = dataset;
-end
-clear i j dir class classname dataset train val
-
-%% run classification
-
-results = cell(numDictionaries, 1);
-for i = 1:numDictionaries
-    result = containers.Map;
-    for class = classes
-        classname = char(class);
-        dataset = datasets{i}(classname);
-        res = cell(N, 1);
-        for j = 1:N
-            % classify
-            fprintf('%d. Classifying images in class "%s" (%d/%d)\n', i, classname, j, N)
-            res{j} = test.classify(dataset.train(j), dataset.val(j));
-        end
-        res = struct2dataset(cell2mat(res));
-        result(classname) = showResults(classname, res, 'summary', false);
+if exist(resultsFile, 'file')
+    % load results from file
+    load(resultsFile);
+    fprintf('Results loaded from file %s\n', resultsFile)
+else
+    % run test
+    results = cell(1, numClasses);
+    for i = 1:numClasses
+       classname = char(classes{i});
+       results{i} = test.dictionarySize(classname, dictionarySize, dirs, N);
     end
-    results{i} = result;
+    save(resultsFile, 'results')
+    fprintf('Results saved to file %s\n', resultsFile)
+    clear i classname
 end
-clear i j result class classname dataset res
 
 %% compare results
 
 % per-class results
 figure(1)
-n = 1;
-fscores = zeros(numel(classes), numDictionaries);
-for class = classes
-    classname = char(class);
-    data = zeros(4, numel(classes));
-    for i = 1:numDictionaries
-        data(:,i) = struct2array(results{i}(classname));
-        fscores(n,i) = data(4,1);
+fscores = zeros(numClasses, numDictionaries);
+for i = 1:numClasses
+    classname = char(classes{i});
+    data = zeros(4, numDictionaries);
+    for j = 1:numDictionaries
+        data(:,j) = struct2array(results{i}{j});
+        fscores(i,j) = data(4,j);
     end
-    subplot(2,3,n)
+    subplot(2,3,i)
     bar(data,'hist')
     ylim([0 1])
     title(classname, 'Interpreter', 'none')
-    legend({num2str(dictionarySize')}, 'Location', 'SouthEastOutside')
+    legend({num2str(dictionarySize')})
     set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
-    n = n+1;
 end
-set(gcf, 'PaperPositionMode', 'auto')
-print('test2-all.eps', '-depsc2', '-f1')
+set(gcf, 'Units', 'Normalized', 'Position', [0 0 1 1], 'PaperPositionMode', 'auto')
+print(fullfile(testDir, 'test2-all.eps'), '-depsc2', '-f1')
 
-% global
+% only f-score
+
 figure(2)
 bar(fscores, 'hist')
 ylim([0 1])
@@ -108,6 +94,6 @@ title('F-score')
 legend({num2str(dictionarySize')})
 set(gca, 'XTickLabel', classes);
 set(gcf, 'PaperPositionMode', 'auto')
-print('test2-fscore.eps', '-depsc2', '-f2')
+print(fullfile(testDir, 'test2-fscore.eps'), '-depsc2', '-f2')
 
-clear n class classname data
+clear i j class classname data

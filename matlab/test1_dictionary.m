@@ -8,10 +8,12 @@ setup
 
 % image classes
 classes = { 'cellphone', 'face', 'person', 'shoes', 'standing_people' };
+numClasses = numel(classes);
 
 % save data dir
-dir_a = fullfile(DATA_DIR, 'test1','a');
-dir_b = fullfile(DATA_DIR, 'test1','b');
+testDir = fullfile(DATA_DIR, 'test1');
+dirA = fullfile(testDir, 'a');
+dirB = fullfile(testDir, 'b');
 
 % number of executions
 N = 10;
@@ -20,110 +22,76 @@ N = 10;
 
 for class = classes
     classname = char(class);
-    vocabulary = buildVocabulary(classname, 'saveDir', dir_a);
-    buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'saveDir', dir_a);
-    buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'reject', true, 'saveDir', dir_a);
+    vocabulary = buildVocabulary(classname, ...
+                                 'saveDir', dirA);
+    buildHistograms(classname, vocabulary, ...
+                    'descriptors', 'phow', ...
+                    'saveDir', dirA);
+    buildHistograms(classname, vocabulary, ...
+                    'descriptors', 'phow', ...
+                    'reject', true, ...
+                    'saveDir', dirA);
 end
 clear class classname vocabulary
 
 %% b. precompute global dictionary and histograms
 
-vocabulary = buildVocabulary(classes, 'saveDir', dir_b);
+vocabulary = buildVocabulary(classes, 'saveDir', dirB);
 for class = classes
     classname = char(class);
-    buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'saveDir', dir_b);
-    buildHistograms(classname, vocabulary, 'descriptors', 'phow', 'reject', true, 'saveDir', dir_b);
+    buildHistograms(classname, vocabulary, ...
+                    'descriptors', 'phow', ...
+                    'saveDir', dirB);
+    buildHistograms(classname, vocabulary, ...
+                    'descriptors', 'phow', ...
+                    'reject', true, ...
+                    'saveDir', dirB);
 end
 clear class classname vocabulary
 
-%% load datasets
+%% do test
 
-datasets_a = containers.Map;
-datasets_b = containers.Map;
-for class = classes
-    classname = char(class);
-    
-    % reset random because we want datasets a and b to use the same images
-    rng(0);
-    for i = 1:N
-        [train(i), val(i)] = loadData(classname, 'datadir', dir_a);
+resultsFile = fullfile(testDir, 'results.mat');
+
+if exist(resultsFile, 'file')
+    % load results from file
+    load(resultsFile);
+    fprintf('Results loaded from file %s\n', resultsFile)
+else
+    % run test    
+    resultsA = cell(1, numClasses);
+    resultsB = cell(1, numClasses);
+    for i = 1:numClasses
+        classname = char(classes{i});
+        [resultsA{i}, resultsB{i}] = test.dictionary(classname, dirA, dirB, N);
     end
-    datasets_a(classname) = struct('train', train, 'val', val);
-    
-    rng(0);
-    for i = 1:N
-        [train(i), val(i)] = loadData(classname, 'datadir', dir_b);
-    end
-    datasets_b(classname) = struct('train', train, 'val', val);
-    
-    % ensure dataset are equals
-    for i = 1:N
-        assert(isequal(strcmp(datasets_a(classname).train(i).names, datasets_b(classname).train(i).names), ...
-                       true(size(datasets_a(classname).train(i).names))));
-        assert(isequal(strcmp(datasets_a(classname).val(i).names, datasets_b(classname).val(i).names), ...
-                       true(size(datasets_a(classname).val(i).names))));
-    end
+    save(resultsFile, 'resultsA', 'resultsB')
+    fprintf('Results saved to file %s\n', resultsFile)
+    clear i classname
 end
-clear i class classname train val
-
-%% a. per-class dictionary classification
-
-results_a = containers.Map;
-for class = classes
-    classname = char(class);
-    datasets = datasets_a(classname);
-    results = cell(N, 1);
-    for i = 1:N
-        % classify
-        fprintf('a. Classifying images in class "%s" (%d/%d)\n', classname, i, N)
-        results{i} = test.classify(datasets.train(i), datasets.val(i));
-    end
-    results = struct2dataset(cell2mat(results));
-    results_a(classname) = showResults(classname, results, 'summary', false);
-%     disp('Press a key to continue with next class, CTRL-C to quit'), pause
-end
-clear i class classname datasets results 
-
-%% b. global dictionary classification
-
-results_b = containers.Map;
-for class = classes
-    classname = char(class);
-    datasets = datasets_b(classname);
-    results = cell(N, 1);
-    for i = 1:N
-        % classify
-        fprintf('b. Classifying images in class "%s" (%d/%d)\n', classname, i, N)
-        results{i} = classify(datasets.train(i), datasets.val(i), @kernel.linear);
-    end
-    results = struct2dataset(cell2mat(results));
-    results_b(classname) = showResults(classname, results, 'summary', false);
-end
-clear i class classname datasets results 
 
 %% compare results
 
 % per-class results
 figure(1)    
-n = 1;
-fscores = zeros(numel(classes), 2);
-for class = classes
-    classname = char(class);
-    data = [ struct2array(results_a(classname)); ...
-             struct2array(results_b(classname)) ]';
-    fscores(n, :) = [results_a(classname).fscore results_b(classname).fscore];
-    subplot(2, 3, n)
+fscores = zeros(numClasses, 2);
+for i = 1:numClasses
+    classname = char(classes{i});
+    data = [ struct2array(resultsA{i}); ...
+             struct2array(resultsB{i}) ]';
+    fscores(i, :) = data(4,:);
+    subplot(2, 3, i)
     bar(data, 'hist')
     ylim([0 1])
     title(classname, 'Interpreter', 'none')
     legend('per-class dictionary', 'global dictionary')
     set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
-    n = n+1;
 end
-set(gcf, 'PaperPositionMode', 'auto')
-print('test1-all.eps', '-depsc2', '-f1')
+set(gcf, 'Units', 'Normalized', 'Position', [0 0 1 1], 'PaperPositionMode', 'auto')
+print(fullfile(testDir, 'test1-all.eps'), '-depsc2', '-f1')
 
 % only f-score
+
 figure(2)
 bar(fscores, 'hist')
 ylim([0 1])
@@ -131,6 +99,6 @@ title('F-score')
 legend('per-class dictionary', 'global dictionary')
 set(gca, 'XTickLabel', classes);
 set(gcf, 'PaperPositionMode', 'auto')
-print('test1-fscore.eps', '-depsc2', '-f2')
+print(fullfile(testDir, 'test1-fscore.eps'), '-depsc2', '-f2')
 
-clear n class classname data
+clear i class classname data
