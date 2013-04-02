@@ -33,7 +33,7 @@ end
 % PHOW
 if opts.phow
     [height, width] = size(im);
-    [keypoints, descriptors] = computeFeatures(im);
+    [keypoints, descriptors] = computeFeatures(im, varargin{:});
     words = quantizeDescriptors(vocabulary, descriptors);
     numWords = size(vocabulary.words, 2);
     histogram.words = computeHistogram(width, height, keypoints, words, numWords, varargin{:});

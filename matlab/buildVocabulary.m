@@ -35,7 +35,7 @@ conf.saveDir = DATA_DIR;
 conf.force = false;
 conf.numImages = 50;
 conf.numWords = 300;
-conf = vl_argparse(conf, varargin);
+[conf, varargin] = vl_argparse(conf, varargin);
 
 if ischar(class)
     % one class
@@ -58,7 +58,7 @@ function vocabulary = loadOrBuildVocabulary(vocabularyFile, numImages)
         % Use only a (not small) subset of training images
         vocabulary = computeVocabularyFromImageList(class, ...
                             vl_colsubset(names', numImages, 'uniform'), ...
-                            conf.numWords);
+                            conf.numWords, varargin{:});
         % save to file
         save(vocabularyFile, '-struct', 'vocabulary');
         fprintf('Vocabulary saved to %s.\n', vocabularyFile);

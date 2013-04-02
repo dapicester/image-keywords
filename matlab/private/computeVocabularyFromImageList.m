@@ -1,4 +1,4 @@
-function vocabulary = computeVocabularyFromImageList(class, names, numWords)
+function vocabulary = computeVocabularyFromImageList(class, names, numWords, varargin)
 % COMPUTEVOCABULARYFROMIMAGELIST  Compute a visual word vocabulary.
 %   VOCABULARY = COMPUTEVOCABULARYFROMIMAGELIST('CLASS', NAMES, NUMWORDS) 
 %   computes a visual word vocabulary from the list of image names (paths)
@@ -23,7 +23,7 @@ parfor i = 1:len
     fullPath = names{i};
     fprintf('  Extracting features from %s (%d/%d)\n', fullPath, i, len);
     im = imread(fullPath);
-    [~, d] = computeFeatures(im);
+    [~, d] = computeFeatures(im, varargin{:}); %#ok<PFBNS>
     descriptors{i} = vl_colsubset(d, numFeatures, 'uniform');
 end
 

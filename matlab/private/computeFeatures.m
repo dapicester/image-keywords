@@ -22,7 +22,7 @@ function [keypoints,descriptors] = computeFeatures(im, varargin)
 
 conf.step = 4;
 conf.scales = [4 6 8 10];
-conf = vl_argparse(conf, varargin);
+[conf, ~] = vl_argparse(conf, varargin);
 
 im = standardizeImage(im);
 [keypoints, descriptors] = vl_phow(im, 'floatdescriptors', true, ...
