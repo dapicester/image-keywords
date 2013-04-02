@@ -15,6 +15,9 @@ function [train, val] = loadData(class, varargin)
 %     data set. By default the number of outliers is equal to the number
 %     of targets.
 %
+%   MaxNumber:: [500]
+%     Define the maximum number of sample images to be used for training.
+%
 %   Descriptors::
 %     Use 'phow', 'phog' or 'both'. Defaults to use both descriptors
 %     if available.
@@ -30,6 +33,7 @@ global DATA_DIR
 
 opts.ratio = 0.75;
 opts.outliers = 1;
+opts.maxNumber = 500;
 opts.dataDir = DATA_DIR;
 opts.descriptors = 'both';
 opts = vl_argparse(opts, varargin);
@@ -38,9 +42,10 @@ opts = vl_argparse(opts, varargin);
 data = loadFile(fullfile(opts.dataDir, [class '_hist.mat']));
 reject = loadFile(fullfile(opts.dataDir, [class '_reject_hist.mat']));
 
+% get at most maxNumber of samples
 len = size(data.histograms, 2);
-numTargets = floor(len * opts.ratio);
-numOutliers = floor((len - numTargets) * opts.outliers);
+numTargets = min(floor(len * opts.ratio), opts.maxNumber);
+numOutliers = min(floor((len - numTargets) * opts.outliers), size(reject.histograms, 2));
 
 indTargets = subset(data.histograms, numTargets);
 indOutliers = subset(reject.histograms, numOutliers);
