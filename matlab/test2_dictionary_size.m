@@ -68,17 +68,21 @@ end
 % per-class results
 figure(1)
 fscores = zeros(numClasses, numDictionaries);
+ferr = zeros(numClasses, numDictionaries);
 for i = 1:numClasses
-    classname = char(classes{i});
     data = zeros(4, numDictionaries);
+    err = zeros(4, numDictionaries);
     for j = 1:numDictionaries
-        data(:,j) = struct2array(results{i}{j});
-        fscores(i,j) = data(4,j);
+        data(:,j) = struct2array(results{i}{j}.mean);
+        err(:,j)  = struct2array(results{i}{j}.std);
+        fscores(i,j) = data(4,j); 
+        ferr(i,j) = err(4,j);
     end
+    
     subplot(2,3,i)
-    bar(data,'hist')
+    test.bar(data, err);
     ylim([0 1])
-    title(classname, 'Interpreter', 'none')
+    title(char(classes{i}), 'Interpreter', 'none')
     legend({num2str(dictionarySize')})
     set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
 end
@@ -88,7 +92,7 @@ print(fullfile(testDir, 'test2-all.eps'), '-depsc2', '-f1')
 % only f-score
 
 figure(2)
-bar(fscores, 'hist')
+test.bar(fscores, ferr);
 ylim([0 1])
 title('F-score')
 legend({num2str(dictionarySize')})

@@ -74,16 +74,20 @@ end
 
 % per-class results
 figure(1)    
-fscores = zeros(numClasses, 2);
+fscores = zeros(numClasses, 2); 
+ferr = zeros(numClasses, 2);
 for i = 1:numClasses
-    classname = char(classes{i});
-    data = [ struct2array(resultsA{i}); ...
-             struct2array(resultsB{i}) ]';
-    fscores(i, :) = data(4,:);
+    avg = [ struct2array(resultsA{i}.mean); ...
+            struct2array(resultsB{i}.mean) ]';
+    error = [ struct2array(resultsA{i}.std); ...
+              struct2array(resultsB{i}.std) ]';
+    fscores(i,:) = avg(4,:);
+    ferr(i,:) = error(4,:);
+    
     subplot(2, 3, i)
-    bar(data, 'hist')
+    test.bar(avg, error);
     ylim([0 1])
-    title(classname, 'Interpreter', 'none')
+    title(char(classes{i}), 'Interpreter', 'none')
     legend('per-class dictionary', 'global dictionary')
     set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
 end
@@ -91,9 +95,8 @@ set(gcf, 'Units', 'Normalized', 'Position', [0 0 1 1], 'PaperPositionMode', 'aut
 print(fullfile(testDir, 'test1-all.eps'), '-depsc2', '-f1')
 
 % only f-score
-
 figure(2)
-bar(fscores, 'hist')
+test.bar(fscores, ferr);
 ylim([0 1])
 title('F-score')
 legend('per-class dictionary', 'global dictionary')

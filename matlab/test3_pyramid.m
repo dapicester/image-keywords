@@ -69,15 +69,19 @@ end
 % per-class results
 figure(1)
 fscores = zeros(numClasses, numTiles);
+ferr = zeros(numClasses, numTiles);
 for i = 1:numClasses
     classname = char(classes{i});
     data = zeros(4, numTiles);
+    err = zeros(4, numTiles);
     for j = 1:numTiles
-        data(:,j) = struct2array(results{i}{j});
+        data(:,j) = struct2array(results{i}{j}.mean);
+        err(:,j) = struct2array(results{i}{j}.std);
         fscores(i,j) = data(4,j);
+        ferr(i,j) = err(4,j);
     end
     subplot(2,3,i)
-    bar(data,'hist')
+    test.bar(data,err);
     ylim([0 1])
     title(classname, 'Interpreter', 'none')
     legend('1\times1', '2\times2', '3\times3', '1\times1 2\times2', ...
@@ -89,7 +93,7 @@ print(fullfile(testDir, 'test3-all.eps'), '-depsc2', '-f1')
 
 % global
 figure(2)
-bar(fscores, 'hist')
+test.bar(fscores,ferr);
 ylim([0 1])
 title('F-score')
 legend('1\times1', '2\times2', '3\times3', '1\times1 2\times2', ...
