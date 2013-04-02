@@ -61,7 +61,7 @@ else
     % run test    
     resultsA = cell(1, numClasses);
     resultsB = cell(1, numClasses);
-    for i = 1:numClasses
+    parfor i = 1:numClasses
         classname = char(classes{i});
         [resultsA{i}, resultsB{i}] = test.dictionary(classname, dirA, dirB, N);
     end

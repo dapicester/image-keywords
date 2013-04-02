@@ -54,7 +54,7 @@ if exist(resultsFile, 'file')
 else
     % run test
     results = cell(1, numClasses);
-    for i = 1:numClasses
+    parfor i = 1:numClasses
        classname = char(classes{i});
        results{i} = test.dictionarySize(classname, dictionarySize, dirs, N);
     end
