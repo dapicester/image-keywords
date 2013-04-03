@@ -11,7 +11,7 @@ function p = anna_phog(image, varargin)
 %   Angles:: [360]
 %     Number of angles for gradients (must be either 180 or 360).
 %
-%   Levels:: [3]
+%   Levels:: [2]
 %     Number of pyramid levels (the minimum is 0).
 %
 %   ROI:: [image size]
@@ -24,7 +24,7 @@ sz = size(image);
 
 conf.bins = 8;
 conf.angles = 360;
-conf.levels = 3;
+conf.levels = 2;
 conf.roi = [1 sz(1) 1 sz(2)];
 conf = vl_argparse(conf, varargin);
 

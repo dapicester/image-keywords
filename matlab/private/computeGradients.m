@@ -8,4 +8,4 @@ function histogram = computeGradients(im, varargin)
 % Author: Andrea Vedaldi
 
 im = standardizeImage(im);
-histogram = anna_phog(im, varargin{:}, 'levels', 2);
+histogram = anna_phog(im, varargin{:});
