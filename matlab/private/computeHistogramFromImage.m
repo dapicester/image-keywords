@@ -41,5 +41,5 @@ end
 
 % PHOW
 if opts.phog
-    histogram.gradients = computeGradients(im);
+    histogram.gradients = computeGradients(im, varargin{:});
 end
