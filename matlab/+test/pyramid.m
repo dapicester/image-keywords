@@ -1,5 +1,5 @@
 function results = pyramid(classname, dirs, N)
-% PYRAMID  Test 3: pyramidal representation
+% PYRAMID  Test 3/6: pyramidal representation
 
 % Author: Paolo D'Apice
 
