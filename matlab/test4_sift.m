@@ -2,6 +2,8 @@
 %
 %   Objective: check how the SIFT parameters affects the classification.
 
+% Author: Paolo D'Apice
+
 clc, clear all
 setup
 
@@ -65,7 +67,7 @@ else
     results = cell(1, numClasses);
     parfor i = 1:numClasses
        classname = char(classes{i});
-       results{i} = test.siftParams(classname, dirs, N);
+       results{i} = test.descriptorsParams(classname, dirs, N);
     end
     save(resultsFile, 'results')
     fprintf('Results saved to file %s\n', resultsFile)

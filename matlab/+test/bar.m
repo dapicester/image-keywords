@@ -2,6 +2,8 @@ function h = bar(data, error)
 % BAR  Bar graph with errorbars.
 % http://www.mathworks.it/support/solutions/en/data/1-18H2E/?solution=1-18H2E
 
+% Author: Paolo D'Apice
+
 h = bar(data);
 set(h, 'BarWidth', 1); % The bars will now touch each other
 

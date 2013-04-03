@@ -1,5 +1,5 @@
-function results = siftParams(classname, dirs, N)
-% SIFTPARAMS  Test4: SIFT parameters scale and step size
+function results = descriptorsParams(classname, dirs, N)
+% SIFTPARAMS  Test4/5: SIFT and HOG parameters
 
 % Author: Paolo D'Apice
 

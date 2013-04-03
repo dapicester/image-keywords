@@ -3,10 +3,6 @@ function results = dictionarySize(classname, sizes, dirs, N)
 
 % Author: Paolo D'Apice
 
-% for each dictionary size:
-%   load dataset
-%   run classification
-
 numSz = numel(sizes);
 results = cell(numSz, 1);
 for i = 1:numSz

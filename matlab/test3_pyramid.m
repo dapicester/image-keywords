@@ -2,6 +2,8 @@
 %
 %   Objective: check how the pyramid representation affects the classification.
 
+% Author: Paolo D'Apice
+
 clc, clear all
 setup
 

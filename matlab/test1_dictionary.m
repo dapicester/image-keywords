@@ -3,6 +3,8 @@
 %   Objective: check wheter a global dictionary built on all the classes is
 %   more powerful than a dictionary built for each class.
 
+% Author: Paolo D'Apice
+
 clc, clear all
 setup
 

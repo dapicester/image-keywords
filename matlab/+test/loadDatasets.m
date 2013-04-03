@@ -1,5 +1,5 @@
 function dataset = loadDatasets(classname, dir, N)
-% LOADDATASET  Load N datasets for target class.
+% LOADDATASETS  Load N datasets for target class.
 
 % Author: Paolo D'Apice
 
