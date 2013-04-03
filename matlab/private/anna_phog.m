@@ -104,22 +104,28 @@ function p = anna_phogDescriptor(bh, bv, L, bin)
 % OUT:
 %   p - pyramid histogram of oriented gradients (phog descriptor)
 
-p = zeros(1, bin * sum(4.^(0:L)));
+len = sum(4.^(0:L));
+p = zeros(1, bin*len);
 
 % FIXME: vectorialize this code!!
 
 bh_size = size(bh);
 counter = 0;
 for l = 0:L
-    x = fix(bh_size(2)/(2^l));
-    y = fix(bh_size(1)/(2^l));
-    for xx = 0:x:bh_size(2) - x - 1
-        for yy = 0:y:bh_size(1) - y - 1
+    x = floor(bh_size(2)/(2^l));
+    y = floor(bh_size(1)/(2^l));
+    xx = 0;
+    yy = 0;
+    while xx + x <= bh_size(2) && counter < len % XXX fix overflow
+        while yy + y <= bh_size(1)
             bh_cella = bh(yy+1:yy+y, xx+1:xx+x);
             bv_cella = bv(yy+1:yy+y, xx+1:xx+x);
             p(counter*bin + 1:counter*bin + bin) = histogram(bh_cella, bv_cella, bin);
             counter = counter + 1;
+            yy = yy + y;
         end
+        yy = 0;
+        xx = xx + x;
     end
 end
 % normalize to 1
