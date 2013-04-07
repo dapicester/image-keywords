@@ -63,7 +63,7 @@ else
     results = cell(1, numClasses);
     parfor i = 1:numClasses
        classname = char(classes{i});
-       results{i} = test.descriptorsParams(classname, dirs, N);
+       results{i} = test.doTest(classname, dirs, N);
     end
     save(resultsFile, 'results')
     fprintf('Results saved to file %s\n', resultsFile)
