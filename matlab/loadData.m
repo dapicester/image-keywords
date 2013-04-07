@@ -71,7 +71,7 @@ function out = descriptors(data)
 % DESCRIPTORS  Choose the descriptors.
     values = struct2cell(data);
     % only one descriptors has been computed
-    if size(data,1) == 1
+    if size(values,1) == 1
         out = cat(1, values{:});
         return
     end
