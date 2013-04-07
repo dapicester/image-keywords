@@ -3,7 +3,7 @@ function [scaled, ranges] = scaleData(input, varargin)
 % 
 %   [SCALED, RANGES] = SVM.SCALEDATA(INPUT)  Scale input data to a 
 %   restricted range. 
-%   Use SVM.SCALEDATA(..., 'lower') or SVM.SCALEDATA(..., L, 'upper', U) 
+%   Use SVM.SCALEDATA(..., 'lower', L) or SVM.SCALEDATA(..., 'upper', U) 
 %   to override the default range [0, 1].   
 %
 %   SCALED = SVM.SCALEDATA(INPUT, 'ranges', RANGES) Scale input data 
