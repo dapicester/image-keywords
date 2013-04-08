@@ -1,50 +1,21 @@
-function results = runClassification(classname, varargin)
-% RUNCLASSIFICATION  Repeatedly un the classification algorithm.
-%   
-%   The function accepts the following options:
+function results = runClassification(classname, datasets, N, varargin)
+% RUNCLASSIFICATION  Run N classifications for target class.
 %
-%   Times:: [10]
-%     Number of test executions.
+%   RESULTS = RUNCLASSIFICATION(CLASSNAME, DATASETS, N)  Run N times
+%   the classification on the given DATASETS.
+%   RESULTS is a structurs with fields 'samples', 'mean', 'std' containing
+%   respectively the classification results, the average and standard
+%   deviation.
 %
-%   Descriptors:: ['both']
-%     Descriptors to use between 'phow', 'phog', 'both'.
-%
-%   Kernel:: [@linearKernel]
-%     Kernel function for the SVM classifier.
-%
-%   DataDir:: [global DATA_DIR]
-%     The directory containing histogram files.
-
+% See also: CLASSIFY()
 
 % Author: Paolo D'Apice
 
-global DATA_DIR SCALING
-
-opts.times = 10;
-opts.descriptors = 'both';
-opts.kernel = @linearKernel;
-opts.dataDir = DATA_DIR;
-opts = vl_argparse(opts, varargin);
-
-% repeat N times and get average results
-results = cell(opts.times, 1);
-parfor i = 1:opts.times
-    % load data
-    fprintf(' * Loading data for class "%s"\n', classname);
-    
-    % use explicit dataDir because in parfor
-    [train,test] = loadData(classname, 'dataDir', opts.dataDir, ...
-                            'descriptors', opts.descriptors);
-
-    % scaling data (optional)
-    if SCALING
-        fprintf('Scaling data\n')
-        [train.histograms, ranges] = svmScale(train.histograms);
-        test.histograms = svmScale(test.histograms, 'ranges', ranges);
-    end
-
-    % classify
-    fprintf(' * Classifying images in class "%s" (%d/%d)\n', classname, i, opts.times)
-    results{i} = classify(train, test, opts.kernel);
+res = cell(N, 1);
+for i = 1:N
+    fprintf('Classifying images in class "%s" (%d/%d)\n', classname, i, N)
+    res{i} = classify(datasets.train(i), datasets.val(i), varargin{:});
+    if i < N, pause, end
 end
-results = struct2dataset(cell2mat(results));
+results.samples = struct2dataset(cell2mat(res));
+[results.mean, results.std] = test.getResults(results.samples);

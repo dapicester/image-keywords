@@ -27,6 +27,7 @@ function results = classify(train, test, kernel, varargin)
 
 % Author: Paolo D'Apice
 
+opts.nu = [];
 opts.verbose    = false;
 opts.trainRank  = false;
 opts.trainStats = false;
@@ -38,8 +39,14 @@ if opts.verbose, print = @fprintf; else print = @nop; end
 
 %% Train a classifier
 
-[train.khistograms, test.khistograms] = svm.precomputeKernel(kernel, train.histograms, test.histograms);
-model = svm.trainOneSVM(train.labels, train.khistograms, '-q');
+[train.khistograms, test.khistograms] = svm.precomputeKernel(kernel, ...
+                                        train.histograms, test.histograms);
+if ~isempty(opts.nu)
+    options = sprintf('-q -n %g', opts.nu);
+else 
+    options = '-q';
+end
+model = svm.trainOneSVM(train.labels, train.khistograms, options);
 
 % evaluate on training data
 [predictedLabels, ~, scores] = svm.predict(train.labels, train.khistograms, model, '-q');
