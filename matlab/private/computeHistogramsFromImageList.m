@@ -11,14 +11,14 @@ function histograms = computeHistogramsFromImageList(vocabulary, names, varargin
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
-conf.descriptors = 0;
+conf.descriptors = [];
 conf.cache = [];
 [conf, varargin] = vl_argparse(conf, varargin);
 
 switch conf.descriptors
     case 'phog', opts = { 'phow', false };
     case 'phow', opts = { 'phog', false };
-    otherwise,   opts = {};
+    otherwise,   opts = {}; % use defaults
 end
 opts = [opts, varargin];
 
