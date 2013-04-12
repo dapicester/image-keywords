@@ -70,8 +70,8 @@ end
 
 % per-class results
 figure(1)
-fscores = zeros(numClasses, numTiles);
-ferr = zeros(numClasses, numTiles);
+precision = zeros(numClasses, numTiles);
+precisionError = zeros(numClasses, numTiles);
 for i = 1:numClasses
     classname = char(classes{i});
     data = zeros(4, numTiles);
@@ -79,8 +79,8 @@ for i = 1:numClasses
     for j = 1:numTiles
         data(:,j) = struct2array(results{i}{j}.mean);
         err(:,j) = struct2array(results{i}{j}.std);
-        fscores(i,j) = data(4,j);
-        ferr(i,j) = err(4,j);
+        precision(i,j) = data(2,j);
+        precisionError(i,j) = err(2,j);
     end
     subplot(2,3,i)
     test.bar(data,err);
@@ -95,13 +95,13 @@ print(fullfile(testDir, 'test3-all.eps'), '-depsc2', '-f1')
 
 % global
 figure(2)
-test.bar(fscores,ferr);
+test.bar(precision,precisionError);
 ylim([0 1])
-title('F-score')
+title('Precision')
 legend('1\times1', '2\times2', '3\times3', '1\times1 2\times2', ...
            '1\times1 2\times2 3\times3', '1\times1 2\times2 3\times1')
 set(gca, 'XTickLabel', classes);
 set(gcf, 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test3-fscore.eps'), '-depsc2', '-f2')
+print(fullfile(testDir, 'test3-precision.eps'), '-depsc2', '-f2')
 
 clear i j class classname data

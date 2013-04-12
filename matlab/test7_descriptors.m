@@ -72,8 +72,8 @@ end
 
 % per-class results
 figure(1)
-fscores = zeros(numClasses, numDescriptors);
-ferr = zeros(numClasses, numDescriptors);
+precision = zeros(numClasses, numDescriptors);
+precisionError = zeros(numClasses, numDescriptors);
 for i = 1:numClasses
     classname = char(classes{i});
     data = zeros(4, numDescriptors);
@@ -81,8 +81,8 @@ for i = 1:numClasses
     for j = 1:numDescriptors
         data(:,j) = struct2array(results{i}{j}.mean);
         err(:,j) = struct2array(results{i}{j}.std);
-        fscores(i,j) = data(4,j);
-        ferr(i,j) = err(4,j);
+        precision(i,j) = data(2,j);
+        precisionError(i,j) = err(2,j);
     end
     subplot(2,3,i)
     test.bar(data,err);
@@ -96,12 +96,12 @@ print(fullfile(testDir, 'test7-all.eps'), '-depsc2', '-f1')
 
 % global
 figure(2)
-test.bar(fscores,ferr);
+test.bar(precision,precisionError);
 ylim([0 1])
-title('F-score')
+title('Precision')
 legend(upper(descriptors))
 set(gca, 'XTickLabel', classes);
 set(gcf, 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test7-fscore.eps'), '-depsc2', '-f2')
+print(fullfile(testDir, 'test7-precision.eps'), '-depsc2', '-f2')
 
 clear i j class classname data
