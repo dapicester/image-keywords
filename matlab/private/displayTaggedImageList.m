@@ -1,4 +1,4 @@
-function displayTaggedImageList(handler, names, tags, varargin)
+function displayTaggedImageList(handler, names, tags, truth, varargin)
 % DISPLAYTAGGEDIMAGELIST  Display a (subset of the) tagged list of images.
 %
 %   DISPLAYTAGGEDIMAGELIST(HANDLER, NAMES, SCORES) displays images from
@@ -33,7 +33,10 @@ for i = 1:numImages
     vl_tightsubplot(numImages, i, 'box', 'inner');
     imagesc(imread(images{i}));
     
-    text(10, 10, tags(:,i), ...
+    match = cellfun(@(t) strcmp(t,truth(images{i})), tags(:,i));
+    color = tif(any(match), [.17 .51 .34], [.85 .16 0]);
+    
+    text(10, 10, actual, 'color', color, ...
         'background', 'w', 'verticalalignment', 'top', 'fontsize', 8);
     set(gca, 'xtick', [], 'ytick', []), axis image
 end

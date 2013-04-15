@@ -6,6 +6,7 @@ function data = runDemo(dataDir, classes)
 rng(0); % no surprises during demo
 
 data = computeHistograms(dataDir);
+truth = readFile(dataDir);
 
 numClasses = numel(classes);
 numImages = numel(data.names);
@@ -40,7 +41,7 @@ for i = 1:numClasses
 
     data.tags(i,:) = setLabels(classname, scores);
 end
-displayTaggedImageList(3, data.names, data.tags);
+displayTaggedImageList(3, data.names, data.tags, truth);
 
 
 function data = computeHistograms(dataDir)
@@ -61,3 +62,15 @@ data.histograms = double(getDescriptors(histograms, 'phog'));
 % others
 data.labels = zeros(numImages, 1); % labels are unknown
 data.class = 'demo';
+
+
+function truth = readFile(dataDir)
+% READFILE  Read file names and tags from text file.
+fid = fopen(fullfile(dataDir, 'demo.txt'));
+values = textscan(fid, '%s %s'); % format: filename tags
+fclose(fid);
+names = cellfun(@(name) fullfile(dataDir, name), values{1}, ...
+                'UniformOutput', false); % add fullpath
+tags = cellfun(@(tag) tif(strcmp(tag, 'none'), '', tag), values{2}, ...
+                'UniformOutput', false); % remove 'none' tag
+truth = containers.Map(names, tags);
