@@ -1,7 +1,7 @@
-function histograms = buildHistograms(class, vocabulary, varargin)
+function buildHistograms(class, vocabulary, varargin)
 % BUILDHISTOGRAMS  Compute training histograms.
 %
-%   HISTOGRAMS = BUILDHISTOGRAMS('CLASS', VOCABULARY) Compute histograms 
+%   BUILDHISTOGRAMS('CLASS', VOCABULARY) Compute histograms 
 %   for images of class CLASS using the given VOCABULARY.
 %
 %   The function accepts the following options:
@@ -15,12 +15,9 @@ function histograms = buildHistograms(class, vocabulary, varargin)
 %   Force:: [true]
 %     Compute the histograms if they already exist.
 %
-%   Reject:: [false]
-%     Compute histograms on outliers.
+%   The function forwards any other unknown option.
 %
-%   Descriptors:: ['both']
-%     Extracts only PHOG if set to 'phog', only PHOW if set to 'phow' 
-%     otherwise extracts both.
+% See also: PRIVATE/COMPUTEHISTOGRAMSFROMIMAGELIST()
 
 % Author: Paolo D'Apice
 
@@ -29,34 +26,18 @@ global DATA_DIR
 conf.dataDir = DATA_DIR;
 conf.saveDir = DATA_DIR;
 conf.force = false;
-conf.reject = false;
 [conf, varargin] = vl_argparse(conf, varargin);
 
-if conf.reject
-    filename = fullfile(conf.saveDir, [class '_reject_hist.mat']);
-    classname = 'reject';
-    message = sprintf('Processing outliers for class %s ...', class);
-else
-    filename = fullfile(conf.saveDir, [class '_hist.mat']);
-    classname = class;
-    message = sprintf('Processing targets for class %s ...', class);
-end
+filename = fullfile(conf.saveDir, [class '_hist.mat']);
+
 
 if conf.force || ~exist(filename, 'file')
-    % compute
-    disp(message)
-    histograms = compute(classname);
+    fprintf('Processing images in class %s ...\n', class);
+    names = readFileNames(class, conf.dataDir);
+    histograms = computeHistogramsFromImageList(vocabulary, names, varargin{:}); %#ok<NASGU>
     save(filename, 'names', 'histograms');
     fprintf('Histograms for class %s saved to %s.\n', class, filename);
 else
     % no need to compute
     fprintf('Histograms for class %s already computed in %s.\n', class, filename);
 end
-
-
-function histograms = compute(class)
-    names = readFileNames(class, conf.dataDir);
-    histograms = computeHistogramsFromImageList(vocabulary, names, varargin{:});
-end % compute
-
-end % buildHistograms

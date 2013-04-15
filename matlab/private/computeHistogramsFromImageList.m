@@ -5,13 +5,19 @@ function histograms = computeHistogramsFromImageList(vocabulary, names, varargin
 %   computes the histograms of visual words for the list of image
 %   paths NAMES by applying iteratively COMPUTEHISTOGRAMFROMIMAGE().
 %
-%   COMPUTEHISTOGRAMSFROMIMAGELIST(..., 'Cache', CACHE_DIR)  Caches
-%   the results to the CACHE_DIR directory.
+%   The function accepts the following options:
+%
+%   Descriptors:: ['both']
+%     Descriptors to be computes. Only PHOG if set to 'phog', only PHOW
+%     if set to 'phow', both otherwise.
+%
+%   Cache:: CACHE_DIR
+%     Caches the histograms to the CACHE_DIR directory.
 
 % Author: Andrea Vedaldi
 % Author: Paolo D'Apice
 
-conf.descriptors = [];
+conf.descriptors = 'both';
 conf.cache = [];
 [conf, varargin] = vl_argparse(conf, varargin);
 
