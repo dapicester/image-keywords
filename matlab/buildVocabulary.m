@@ -18,7 +18,7 @@ function vocabulary = buildVocabulary(class, varargin)
 %   Force:: [true]
 %     Build the vocabulary even if it already exists.
 %
-%   NumImages:: [50]
+%   NumImages:: [10]
 %     Build the vocabulary using only a subset of all the available images
 %     for each class;
 %
@@ -33,7 +33,7 @@ global DATA_DIR
 conf.dataDir = DATA_DIR;
 conf.saveDir = DATA_DIR;
 conf.force = false;
-conf.numImages = 50;
+conf.numImages = 10;
 conf.numWords = 300;
 [conf, varargin] = vl_argparse(conf, varargin);
 
