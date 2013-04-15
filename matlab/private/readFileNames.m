@@ -23,6 +23,11 @@ names = cat(1, names{:});
 
 function names = readFile(class, dataDir)
 % READFILE  Read file names from text file.
-names = textread(fullfile(dataDir, [class '.txt']), '%s');
-names = cellfun(@(name) fullfile(dataDir, class, name), names, ...
-                'UniformOutput', false);
+filename = fullfile(dataDir, [class '.txt']);
+try
+    names = textread(filename, '%s');
+    names = cellfun(@(name) fullfile(dataDir, class, name), names, ...
+                    'UniformOutput', false);
+catch err
+    error('Cannot read file %s', filename);
+end
