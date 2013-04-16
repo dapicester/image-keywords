@@ -7,10 +7,11 @@
 clc, clear all
 setup
 
-% image classes
-%classes = { 'cellphone', 'face', 'person', 'shoes', 'standing_people' };
-classes = { 'bag', 'shoes' };
+% image classes (not including 'reject')
+classes = { 'bag', 'shoes', 'standing_people' };
 numClasses = numel(classes);
+
+allClasses = union(classes, 'reject');
 
 % HOG parameters {range, angles}
 params = { { 180  4 } { 360  8 } ...
@@ -24,6 +25,7 @@ testDir = fullfile(DATA_DIR, 'test5');
 dirs = cell(numParams, 1);
 for i = 1:numParams
     dirs{i} = fullfile(testDir, num2str(i));
+    mkdir(dirs{i});
 end
 
 % number of executions
@@ -32,23 +34,13 @@ N = 10;
 %% precompute histograms
 
 for i = 1:numParams
-    dir = dirs{i};
-    for class = classes
-        classname = char(class);
-        buildHistograms(classname, {}, ...
-                        'descriptors', 'phog', ...
-                        'angles', params{i}{1}, ...
-                        'bins', params{i}{2}, ...
-                        'saveDir', dir);
-        buildHistograms(classname, {}, ...
-                        'descriptors', 'phog', ...
-                        'angles', params{i}{1}, ...
-                        'bins', params{i}{2}, ...
-                        'reject', true, ...
-                        'saveDir', dir);
-    end
+    buildHistograms(allClasses, {}, ...
+                    'descriptors', 'phog', ...
+                    'angles', params{i}{1}, ...
+                    'bins', params{i}{2}, ...
+                    'saveDir', dirs{i});
 end
-clear i dir class classname vocabulary
+clear i
 
 %% do test
 
@@ -63,7 +55,7 @@ else
     results = cell(1, numClasses);
     parfor i = 1:numClasses
        classname = char(classes{i});
-       results{i} = test.doTest(classname, dirs, N);
+       results{i} = test.doTest(classes, classname, dirs, N); %#ok<PFBNS>
     end
     save(resultsFile, 'results')
     fprintf('Results saved to file %s\n', resultsFile)
@@ -72,40 +64,12 @@ end
 
 %% compare results
 
-% per-class results
-figure(1)
-precision = zeros(numClasses, numParams);
-precisionError = zeros(numClasses, numParams);
-for i = 1:numClasses
-    classname = char(classes{i});
-    data = zeros(4, numParams);
-    err = zeros(4, numParams);
-    for j = 1:numParams
-        data(:,j) = struct2array(results{i}{j}.mean);
-        err(:,j) = struct2array(results{i}{j}.std);
-        precision(i,j) = data(2,j);
-        precisionError(i,j) = err(2,j);
-    end
-    subplot(2,3,i)
-    test.bar(data,err);
-    ylim([0 1])
-    title(classname, 'Interpreter', 'none')
-    legend(cellfun(@(p) sprintf('\\theta = %d n = %d', p{1}, p{2}), ...
-                   params, 'UniformOutput', false))
-    set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
-end
-set(gcf, 'Units', 'Normalized', 'Position', [0 0 1 1], 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test5-all.eps'), '-depsc2', '-f1')
+legend = cellfun(@(p) sprintf('\\theta = %d n = %d', p{1}, p{2}), ...
+                 params, 'UniformOutput', false);
 
-% global
-figure(2)
-test.bar(precision,precisionError);
-ylim([0 1])
-title('precision')
-legend(cellfun(@(p) sprintf('\\theta = %d n = %d', p{1}, p{2}), ...
-               params, 'UniformOutput', false), 'Location', 'BestOutside')
-set(gca, 'XTickLabel', classes);
-set(gcf, 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test5-precision.eps'), '-depsc2', '-f2')
+test.plotResults(results, classes, numParams, ...
+                 'legend', legend, ...
+                 'legendPosition', 'BestOutside', ...
+                 'saveDir', testDir);
 
-clear i j class classname data
+clear legend

@@ -7,23 +7,30 @@
 clc, clear all
 setup
 
-% image classes
-%classes = { 'cellphone', 'face', 'person', 'shoes', 'standing_people' };
-classes = { 'bag', 'shoes' };
+% image classes (not including 'reject')
+classes = { 'bag', 'shoes', 'standing_people' };
 numClasses = numel(classes);
 
-% kernels
-import kernel.*
-kernels = { @linear, @rbf, @chi2, @histint, @hellinger }; % TODO parameters
+allClasses = union(classes, 'reject');
+
+% kernels TODO parameters
+kernels = { @kernel.linear, ...
+            @kernel.rbf, ...
+            @kernel.chi2, ...
+            @kernel.histint, ...
+            @kernel.hellinger }; 
 numKernels = numel(kernels);
 
 % save data dirs
 testDir = fullfile(DATA_DIR, 'test9');
+mkdir(testDir);
 
 % number of executions
 N = 10;
 
-%% precompute histograms
+%% precompute histograms 
+
+% FIXME per-class configuration!
 
 for class = classes
     classname = char(class);

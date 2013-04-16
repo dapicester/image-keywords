@@ -13,7 +13,7 @@ function vocabulary = buildVocabulary(class, varargin)
 %     The directory containing image files.
 %
 %   SaveDir:: [global DATA_DIR]
-%     The directory containing the dictionary.
+%     The directory where to save the dictionary.
 %
 %   Force:: [true]
 %     Build the vocabulary even if it already exists.

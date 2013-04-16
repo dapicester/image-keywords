@@ -4,7 +4,8 @@ function plotResults(results, classes, numTests, varargin)
 % Author: Paolo D'Apice
 
 conf.legend = [];
-conf.li = 'tex';
+conf.legendInterpreter = [];
+conf.legendPosition = [];
 conf.saveDir = [];
 conf = vl_argparse(conf, varargin);
 
@@ -27,11 +28,10 @@ for i = 1:numClasses
     subplot(1, 3, i)
     test.bar(data, err);
     ylim([0 1])
+    
     title(char(classes{i}), 'Interpreter', 'none')
     % TODO global legend
-    if ~isempty(conf.legend)
-        legend(conf.legend, 'Interpreter', conf.li);
-    end
+    setLegend(conf);
     set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
 end
 set(gcf, 'Units', 'Normalized', 'Position', [0 0 1 1], 'PaperPositionMode', 'auto')
@@ -41,10 +41,7 @@ figure(2)
 test.bar(precision, precisionError);
 ylim([0 1])
 title('Precision')
-% TODO global legend
-if ~isempty(conf.legend)
-    legend(conf.legend, 'Interpreter', conf.li)
-end
+setLegend(conf);
 set(gca, 'XTickLabel', classes);
 set(gcf, 'PaperPositionMode', 'auto')
 
@@ -59,3 +56,16 @@ if ~isempty(conf.saveDir)
     fprintf('Figure 2 saved to file %s\n', file2);
 end
 
+
+function setLegend(conf)
+if ~isempty(conf.legend)
+    h = legend(conf.legend);
+    % interpreter
+    if ~isempty(conf.legendInterpreter)
+        set(h, 'Interpreter', conf.legendInterpreter);
+    end
+    % location
+    if ~isempty(conf.legendPosition)
+        set(h, 'Location', conf.legendPosition)
+    end
+end

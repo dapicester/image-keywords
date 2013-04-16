@@ -7,10 +7,11 @@
 clc, clear all
 setup
 
-% image classes
-%classes = { 'cellphone', 'face', 'person', 'shoes', 'standing_people' };
-classes = { 'bag', 'shoes' };
+% image classes (not including 'reject')
+classes = { 'bag', 'shoes', 'standing_people' };
 numClasses = numel(classes);
+
+allClasses = union(classes, 'reject');
 
 % pyramid levels
 levels = 0:3;
@@ -21,6 +22,7 @@ testDir = fullfile(DATA_DIR, 'test6');
 dirs = cell(numLevels, 1);
 for i = 1:numLevels
     dirs{i} = fullfile(testDir, num2str(levels(i)));
+    mkdir(dirs{i});
 end
 
 % number of executions
@@ -29,21 +31,12 @@ N = 10;
 %% precompute histograms
 
 for i = 1:numLevels
-    dir = dirs{i};
-    for class = classes
-        classname = char(class);
-        buildHistograms(classname, {}, ...
-                        'descriptors', 'phog', ...
-                        'levels', levels(i), ...
-                        'saveDir', dir);
-        buildHistograms(classname, {}, ...
-                        'descriptors', 'phog', ...
-                        'levels', levels(i), ...
-                        'reject', true, ...
-                        'saveDir', dir);
-    end
+    buildHistograms(allClasses, {}, ...
+                    'descriptors', 'phog', ...
+                    'levels', levels(i), ...
+                    'saveDir', dirs{i});
 end
-clear i dir class classname vocabulary
+clear i
 
 %% do test
 
@@ -56,9 +49,9 @@ if exist(resultsFile, 'file')
 else
     % run test
     results = cell(1, numClasses);
-    for i = 1:numClasses
+    parfor i = 1:numClasses
        classname = char(classes{i});
-       results{i} = test.doTest(classname, dirs, N);
+       results{i} = test.doTest(classes, classname, dirs, N); %#ok<PFBNS>
     end
     save(resultsFile, 'results')
     fprintf('Results saved to file %s\n', resultsFile)
@@ -67,38 +60,9 @@ end
 
 %% compare results
 
-% per-class results
-figure(1)
-precision = zeros(numClasses, numLevels);
-precisionError = zeros(numClasses, numLevels);
-for i = 1:numClasses
-    classname = char(classes{i});
-    data = zeros(4, numLevels);
-    err = zeros(4, numLevels);
-    for j = 1:numLevels
-        data(:,j) = struct2array(results{i}{j}.mean);
-        err(:,j) = struct2array(results{i}{j}.std);
-        precision(i,j) = data(2,j);
-        precisionError(i,j) = err(2,j);
-    end
-    subplot(2,3,i)
-    test.bar(data,err);
-    ylim([0 1])
-    title(classname, 'Interpreter', 'none')
-    legend(num2str(levels'))
-    set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
-end
-set(gcf, 'Units', 'Normalized', 'Position', [0 0 1 1], 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test6-all.eps'), '-depsc2', '-f1')
-
-% global
-figure(2)
-test.bar(precision,precisionError);
-ylim([0 1])
-title('Precision')
-legend(num2str(levels'))
-set(gca, 'XTickLabel', classes);
-set(gcf, 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test6-precision.eps'), '-depsc2', '-f2')
-
-clear i j class classname data
+legend = arrayfun(@(l) sprintf('Level %d', l), levels, 'UniformOutput', false);
+test.plotResults(results, classes, numLevels, ...
+                 'legend', legend, ...
+                 'legendPosition', 'NorthWest', ...
+                 'saveDir', testDir);
+clear legend

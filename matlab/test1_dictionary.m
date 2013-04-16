@@ -8,46 +8,60 @@
 clc, clear all
 setup
 
-% image classes
-classes = { 'cellphone', 'face', 'person', 'shoes', 'standing_people' };
+% image classes (not including 'reject')
+classes = { 'bag', 'shoes', 'standing_people' };
 numClasses = numel(classes);
+
+allClasses = union(classes, 'reject');
 
 % save data dir
 testDir = fullfile(DATA_DIR, 'test1');
 dirA = fullfile(testDir, 'a');
 dirB = fullfile(testDir, 'b');
+dirC = fullfile(testDir, 'c');
+
+mkdir(dirA);
+mkdir(dirB);
+mkdir(dirC);
 
 % number of executions
 N = 10;
 
-%% a. precompute per-class dictionary and histograms
+%% compute per-class dictionary and histograms
 
 for class = classes
     classname = char(class);
+    savedir = fullfile(dirA, classname);
+    mkdir(savedir);
     vocabulary = buildVocabulary(classname, ...
-                                 'saveDir', dirA);
+                                 'saveDir', savedir);
+    buildHistograms(allClasses, vocabulary, ...
+                    'descriptors', 'phow', ...
+                    'saveDir', savedir);
+end
+clear class classname savedir vocabulary
+
+%% compute global dictionary and histograms (no reject)
+
+vocabulary = buildVocabulary(classes, ...
+                             'saveDir', dirB);
+for class = allClasses
+    classname = char(class);
     buildHistograms(classname, vocabulary, ...
                     'descriptors', 'phow', ...
-                    'saveDir', dirA);
-    buildHistograms(classname, vocabulary, ...
-                    'descriptors', 'phow', ...
-                    'reject', true, ...
-                    'saveDir', dirA);
+                    'saveDir', dirB);
 end
 clear class classname vocabulary
 
-%% b. precompute global dictionary and histograms
-
-vocabulary = buildVocabulary(classes, 'saveDir', dirB);
-for class = classes
+%% compute global dictionary and histograms (including reject)
+ 
+vocabulary = buildVocabulary(allClasses, ...
+                             'saveDir', dirC);
+for class = allClasses
     classname = char(class);
     buildHistograms(classname, vocabulary, ...
                     'descriptors', 'phow', ...
-                    'saveDir', dirB);
-    buildHistograms(classname, vocabulary, ...
-                    'descriptors', 'phow', ...
-                    'reject', true, ...
-                    'saveDir', dirB);
+                    'saveDir', dirC);
 end
 clear class classname vocabulary
 
@@ -60,50 +74,32 @@ if exist(resultsFile, 'file')
     load(resultsFile);
     fprintf('Results loaded from file %s\n', resultsFile)
 else
-    % run test    
-    resultsA = cell(1, numClasses);
-    resultsB = cell(1, numClasses);
+    % run test
+    dirsA = cellfun(@(c)fullfile(dirA,char(c)), classes, 'UniformOutput', false);
+    dirs = cat(2, dirsA, dirB, dirC);
+    results = cell(1, numClasses);
     parfor i = 1:numClasses
         classname = char(classes{i});
-        [resultsA{i}, resultsB{i}] = test.dictionary(classname, dirA, dirB, N);
+        results{i} = test.doTest(classes, classname, dirs, N); %#ok<PFBNS>
     end
-    save(resultsFile, 'resultsA', 'resultsB')
+    save(resultsFile, 'results')
     fprintf('Results saved to file %s\n', resultsFile)
-    clear i classname
+    clear dirsA dirs i classname
 end
 
 %% compare results
 
-% per-class results
-figure(1)    
-precision = zeros(numClasses, 2); 
-precisionError = zeros(numClasses, 2);
-for i = 1:numClasses
-    avg = [ struct2array(resultsA{i}.mean); ...
-            struct2array(resultsB{i}.mean) ]';
-    error = [ struct2array(resultsA{i}.std); ...
-              struct2array(resultsB{i}.std) ]';
-    precision(i,:) = avg(2,:);
-    precisionError(i,:) = error(2,:);
-    
-    subplot(2, 3, i)
-    test.bar(avg, error);
-    ylim([0 1])
-    title(char(classes{i}), 'Interpreter', 'none')
-    legend('per-class dictionary', 'global dictionary')
-    set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
-end
-set(gcf, 'Units', 'Normalized', 'Position', [0 0 1 1], 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test1-all.eps'), '-depsc2', '-f1')
+numTests = numClasses + 2; % dirA*numClasses + dirB + dirC
 
-% only f-score
-figure(2)
-test.bar(precision, precisionError);
-ylim([0 1])
-title('Precision')
-legend('per-class dictionary', 'global dictionary')
-set(gca, 'XTickLabel', classes);
-set(gcf, 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test1-precision.eps'), '-depsc2', '-f2')
+legend = cat(2, cellfun(@(c) sprintf('per-class dictionary (%s)', char(c)), ...
+                        classes, 'UniformOutput', false), ...
+                'global dictionary (no outliers)', ...
+                'global dictionary' );
+       
+test.plotResults(results, classes, numTests, ...
+                 'legend', legend, ...
+                 'legendInterpreter', 'none', ...
+                 'legendPosition', 'NorthWest', ...
+                 'saveDir', testDir);
 
-clear i class classname data
+clear numTests legend

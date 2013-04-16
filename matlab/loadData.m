@@ -1,4 +1,4 @@
-function [train, val] = loadData(class, varargin)
+function [train, val] = loadData(classes, class, varargin)
 % LOADDATA  Load training and validation data.
 %
 %   [TRAIN, VAL] = LOADDATA(CLASS) Load training and validation data 
@@ -31,6 +31,8 @@ function [train, val] = loadData(class, varargin)
 
 global DATA_DIR
 
+% TODO opts.sets = 'one'|'multi' => loadDataOneClass|loadDataMultiClass
+
 opts.ratio = 0.75;
 opts.outliers = 1;
 opts.maxNumber = 500;
@@ -38,44 +40,47 @@ opts.dataDir = DATA_DIR;
 opts.descriptors = 'both';
 opts = vl_argparse(opts, varargin);
 
-% load data
-data = loadFile(fullfile(opts.dataDir, [class '_hist.mat']));
-reject = loadFile(fullfile(opts.dataDir, [class '_reject_hist.mat']));
+% load target data
+target = loadFile(fullfile(opts.dataDir, [class '_hist.mat']));
 
-% get at most maxNumber of samples
-len = size(data.histograms, 2);
+% load outliers data
+outliers.histograms = [];
+outliers.names = {};
+for c = setdiff(classes, class)
+    r = loadFile(fullfile(opts.dataDir, [char(c) '_hist.mat']));
+    outliers.histograms = [outliers.histograms r.histograms];
+    outliers.names = cat(1, outliers.names, r.names);
+end
+
+% get at most maxNumber of target samples
+len = size(target.histograms, 2);
 numTargets = min(floor(len * opts.ratio), opts.maxNumber);
-numOutliers = min(floor((len - numTargets) * opts.outliers), size(reject.histograms, 2));
+numOutliers = min(floor((len - numTargets) * opts.outliers), ...
+                  size(outliers.histograms, 2));
 
-indTargets = subset(data.histograms, numTargets);
-indOutliers = subset(reject.histograms, numOutliers);
+% get subset indices
+indTargets = subset(target.histograms, numTargets);
+indOutliers = subset(outliers.histograms, numOutliers);
 
-% training data (targets)
-train.class = class;
-train.names = data.names(indTargets);
-train.histograms = double(getDescriptors(data.histograms(indTargets)));
+% training data (targets only)
+train.names = target.names(indTargets);
+train.histograms = double(getDescriptors(target.histograms(indTargets)));
 train.labels = ones(numTargets, 1);
 fprintf('Number of training images: %d targets\n', size(train.histograms, 1));
 
 % validation data (targets and outliers)
-val.class = class;
-val.names = [data.names(~indTargets); reject.names(indOutliers)];
-val.histograms = double([getDescriptors(data.histograms(~indTargets)); ...
-                         getDescriptors(reject.histograms(indOutliers)) ]);
+val.names = [target.names(~indTargets); outliers.names(indOutliers)];
+val.histograms = double([getDescriptors(target.histograms(~indTargets)); ...
+                         getDescriptors(outliers.histograms(indOutliers)) ]);
 val.labels = [ones(len-numTargets, 1); -ones(numOutliers, 1)];
 fprintf('Number of validation images: %d targets, %d outliers\n', ...
         sum(val.labels > 0), sum(val.labels < 0));
 
 
 function ind = subset(data, len)
-% SUBSET  Return a subset of LEN rows of the input DATA.
-n = size(data, 2);
-ind = zeros(1, n);
-ind(sort(randperm(n, len))) = 1;
-ind = logical(ind);
-
-
-function data = loadFile(filename)
-% LOADFILE  Load data from file.
-if ~exist(filename, 'file'), error('%s: does not exist', filename), end
-data = load(filename);
+% SUBSET  Return logical indices of a subset of LEN rows of the input DATA.
+numData = size(data, 2);
+len = min(numData, len);
+perm = randperm(numData);
+ind = false(1, numData);
+ind(sort(perm(1:len))) = true;

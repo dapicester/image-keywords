@@ -7,9 +7,11 @@
 clc, clear all
 setup
 
-% image classes
-classes = { 'cellphone', 'face', 'person', 'shoes', 'standing_people' };
+% image classes (not including 'reject')
+classes = { 'bag', 'shoes', 'standing_people' };
 numClasses = numel(classes);
+
+allClasses = union(classes, 'reject');
 
 % dictionary sizes
 dictionarySize = [ 200 300 500 800 1000 2000 ];
@@ -20,30 +22,24 @@ testDir = fullfile(DATA_DIR, 'test2');
 dirs = cell(numDictionaries, 1);
 for i = 1:numDictionaries
     dirs{i} = fullfile(testDir, num2str(dictionarySize(i)));
+    mkdir(dirs{i});
 end
 
 % number of executions
 N = 10;
 
-%% precompute dictionaries and histograms
+%% compute dictionaries and histograms
 
 for i = 1:numDictionaries
     dir = char(dirs{i});
     vocabulary = buildVocabulary(classes, ...
                                  'numWords', dictionarySize(i), ...
                                  'saveDir', dir);
-    for class = classes
-        classname = char(class);
-        buildHistograms(classname, vocabulary, ...
-                        'descriptors', 'phow', ...
-                        'saveDir', dir);
-        buildHistograms(classname, vocabulary, ...
-                        'descriptors', 'phow', ...
-                        'reject', true, ...
-                        'saveDir', dir);
-    end
+    buildHistograms(allClasses, vocabulary, ...
+                    'descriptors', 'phow', ...
+                    'saveDir', dir);
 end
-clear i dir class classname vocabulary
+clear i dir vocabulary
 
 %% do test
 
@@ -58,7 +54,7 @@ else
     results = cell(1, numClasses);
     parfor i = 1:numClasses
        classname = char(classes{i});
-       results{i} = test.doTest(classname, dirs, N);
+       results{i} = test.doTest(classes, classname, dirs, N); %#ok<PFBNS>
     end
     save(resultsFile, 'results')
     fprintf('Results saved to file %s\n', resultsFile)
@@ -67,39 +63,11 @@ end
 
 %% compare results
 
-% per-class results
-figure(1)
-precision = zeros(numClasses, numDictionaries);
-precisionError = zeros(numClasses, numDictionaries);
-for i = 1:numClasses
-    data = zeros(4, numDictionaries);
-    err = zeros(4, numDictionaries);
-    for j = 1:numDictionaries
-        data(:,j) = struct2array(results{i}{j}.mean);
-        err(:,j)  = struct2array(results{i}{j}.std);
-        precision(i,j) = data(2,j); 
-        precisionError(i,j) = err(2,j);
-    end
-    
-    subplot(2,3,i)
-    test.bar(data, err);
-    ylim([0 1])
-    title(char(classes{i}), 'Interpreter', 'none')
-    legend({num2str(dictionarySize')})
-    set(gca, 'XTickLabel', {'accuracy', 'precision', 'recall', 'f-score'})
-end
-set(gcf, 'Units', 'Normalized', 'Position', [0 0 1 1], 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test2-all.eps'), '-depsc2', '-f1')
+legend = arrayfun(@(s) sprintf('%d words', s), dictionarySize, 'UniformOutput', false);
+              
+test.plotResults(results, classes, numDictionaries, ...
+                 'legend', legend, ...
+                 'legendPosition', 'NorthWest', ...
+                 'saveDir', testDir);
 
-% only f-score
-
-figure(2)
-test.bar(precision, precisionError);
-ylim([0 1])
-title('Precision')
-legend({num2str(dictionarySize')})
-set(gca, 'XTickLabel', classes);
-set(gcf, 'PaperPositionMode', 'auto')
-print(fullfile(testDir, 'test2-precision.eps'), '-depsc2', '-f2')
-
-clear i j class classname data
+clear legend
