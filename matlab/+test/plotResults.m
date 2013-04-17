@@ -1,5 +1,5 @@
-function plotResults(results, classes, numTests, varargin)
-% PLOTRESULTS  Plot test results.
+function precision = plotResults(results, classes, numTests, varargin)
+% PLOTRESULTS  Plot test results and returns the average precision.
 
 % Author: Paolo D'Apice
 
