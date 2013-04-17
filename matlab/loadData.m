@@ -64,14 +64,14 @@ indOutliers = subset(outliers.histograms, numOutliers);
 
 % training data (targets only)
 train.names = target.names(indTargets);
-train.histograms = double(getDescriptors(target.histograms(indTargets)));
+train.histograms = double(getDescriptors(target.histograms(indTargets), opts.descriptors));
 train.labels = ones(numTargets, 1);
 fprintf('Number of training images: %d targets\n', size(train.histograms, 1));
 
 % validation data (targets and outliers)
 val.names = [target.names(~indTargets); outliers.names(indOutliers)];
-val.histograms = double([getDescriptors(target.histograms(~indTargets)); ...
-                         getDescriptors(outliers.histograms(indOutliers)) ]);
+val.histograms = double([getDescriptors(target.histograms(~indTargets), opts.descriptors); ...
+                         getDescriptors(outliers.histograms(indOutliers), opts.descriptors) ]);
 val.labels = [ones(len-numTargets, 1); -ones(numOutliers, 1)];
 fprintf('Number of validation images: %d targets, %d outliers\n', ...
         sum(val.labels > 0), sum(val.labels < 0));
