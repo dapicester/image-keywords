@@ -36,7 +36,7 @@ for i = 1:numImages
     match = cellfun(@(t) strcmp(t,truth(images{i})), tags(:,i));
     color = tif(any(match), [.17 .51 .34], [.85 .16 0]);
     
-    text(10, 10, actual, 'color', color, ...
+    text(10, 10, tags(:,i), 'color', color, ...
         'background', 'w', 'verticalalignment', 'top', 'fontsize', 8);
     set(gca, 'xtick', [], 'ytick', []), axis image
 end
