@@ -1,10 +1,23 @@
 *~
 *.mat
 *.eps
+tags
+
+# data
 data/*
 !data/*.txt
-!data/test?
-!data/test??
+
+# dependencies
 dependencies/*
 !dependencies/libsvm-3.16.tar.gz
 !dependencies/vlfeat-0.9.16-bin.tar.gz
+
+# tools
+tools/*
+!tools/*.rb
+
+# others
+images/
+mcc/
+scd/
+urls/
