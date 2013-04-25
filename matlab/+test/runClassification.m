@@ -11,9 +11,15 @@ function results = runClassification(classname, datasets, N, varargin)
 
 % Author: Paolo D'Apice
 
+multi = iscell(classname);
+
 res = cell(N, 1);
 for i = 1:N
-    fprintf('Classifying images in class "%s" (%d/%d)\n', classname, i, N)
+    if multi
+        fprintf('Classifying images (%d/%d)\n', i, N)
+    else
+        fprintf('Classifying images in class "%s" (%d/%d)\n', classname, i, N)
+    end
     res{i} = test.classify(datasets.train(i), datasets.val(i), varargin{:});
 end
 results.samples = struct2dataset(cell2mat(res));

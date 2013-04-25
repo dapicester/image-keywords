@@ -25,7 +25,7 @@ for i = 1:numClasses
         precisionError(i,j) = err(2,j);
     end
     
-    subplot(1, 3, i)
+    subplot(1, numClasses, i)
     test.bar(data, err);
     ylim([0 1])
     

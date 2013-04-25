@@ -1,5 +1,5 @@
 function [train, val] = loadData(classes, class, varargin)
-% LOADDATA  Load training and validation data.
+% LOADDATA  Load training and validation data for the one-class problem.
 %
 %   [TRAIN, VAL] = LOADDATA(CLASS) Load training and validation data 
 %   for the given CLASS.
@@ -10,6 +10,9 @@ function [train, val] = loadData(classes, class, varargin)
 %     Define the ratio of training data. By default 75% of data is put in
 %     the train data set and the remainder 25% is used for validation.
 %
+%   TrainOutliers:: [false]
+%     Include outliers in the training data.
+%   
 %   Outliers:: [1]
 %     Define the ratio between outliers and targets in the validation 
 %     data set. By default the number of outliers is equal to the number
@@ -26,19 +29,24 @@ function [train, val] = loadData(classes, class, varargin)
 %     The directory containing the saved data. Default is defined by global
 %     variable but it cannot be accessed in parfors so it must be
 %     explicitely specified.
+%
+%   Verbose:: [false]
+%     Print verbose messages.
 
 % Author: Paolo D'Apice
 
 global DATA_DIR
 
-% TODO opts.sets = 'one'|'multi' => loadDataOneClass|loadDataMultiClass
-
+opts.verbose = false;
 opts.ratio = 0.75;
 opts.outliers = 1;
+opts.trainOutliers = false;
 opts.maxNumber = 500;
 opts.dataDir = DATA_DIR;
 opts.descriptors = 'both';
 opts = vl_argparse(opts, varargin);
+
+printf = printHandle(opts.verbose);
 
 % load target data
 target = loadFile(fullfile(opts.dataDir, [class '_hist.mat']));
@@ -52,35 +60,70 @@ for c = setdiff(classes, class)
     outliers.names = cat(1, outliers.names, r.names);
 end
 
+lenTargets = size(target.histograms, 2);
+lenOutliers = size(outliers.histograms, 2);
+printf('Available samples: %d targets, %d outliers\n', lenTargets, lenOutliers);
+
 % get at most maxNumber of target samples
-len = size(target.histograms, 2);
-numTargets = min(floor(len * opts.ratio), opts.maxNumber);
-numOutliers = min(floor((len - numTargets) * opts.outliers), ...
-                  size(outliers.histograms, 2));
+[numTargets, numOutliers] = getNumSamples();
 
 % get subset indices
 indTargets = subset(target.histograms, numTargets);
 indOutliers = subset(outliers.histograms, numOutliers);
 
-% training data (targets only)
-train.names = target.names(indTargets);
-train.histograms = double(getDescriptors(target.histograms(indTargets), opts.descriptors));
-train.labels = ones(numTargets, 1);
-fprintf('Number of training images: %d targets\n', size(train.histograms, 1));
+% data sets
+train = getTrainData();
+val = getValidationData();
 
-% validation data (targets and outliers)
-val.names = [target.names(~indTargets); outliers.names(indOutliers)];
-val.histograms = double([getDescriptors(target.histograms(~indTargets), opts.descriptors); ...
-                         getDescriptors(outliers.histograms(indOutliers), opts.descriptors) ]);
-val.labels = [ones(len-numTargets, 1); -ones(numOutliers, 1)];
-fprintf('Number of validation images: %d targets, %d outliers\n', ...
-        sum(val.labels > 0), sum(val.labels < 0));
+    
+function [nt, no] = getNumSamples()
+    if opts.trainOutliers
+        nt = numSamples(lenTargets, opts.ratio, opts.maxNumber);
+        no = numSamples(lenOutliers, opts.ratio, opts.maxNumber);
+    else
+        nt = numSamples(lenTargets, opts.ratio, opts.maxNumber);
+        no = numSamples(lenTargets - nt, opts.outliers, lenOutliers);
+    end
+end
 
 
-function ind = subset(data, len)
-% SUBSET  Return logical indices of a subset of LEN rows of the input DATA.
-numData = size(data, 2);
-len = min(numData, len);
-perm = randperm(numData);
-ind = false(1, numData);
-ind(sort(perm(1:len))) = true;
+function data = getTrainData()
+    if opts.trainOutliers
+        data.names = [ target.names(indTargets); ...
+                       outliers.names(indOutliers) ];
+        data.histograms = double( ...
+            [ getDescriptors(target.histograms(indTargets), opts.descriptors); ...
+              getDescriptors(outliers.histograms(indOutliers), opts.descriptors) ]);
+        data.labels = [ ones(numTargets, 1); ...
+                       -ones(numOutliers, 1) ];
+        printf('Number of training images: %d targets, %d outliers\n', ...
+               numTargets, numOutliers);
+    else
+        data.names = target.names(indTargets);
+        data.histograms = double(getDescriptors(target.histograms(indTargets), opts.descriptors));
+        data.labels = ones(numTargets, 1);
+        printf('Number of training images: %d targets\n', ...
+               size(data.histograms, 1));
+    end
+end
+
+
+function data = getValidationData()
+    if opts.trainOutliers
+        data.names = [target.names(~indTargets); outliers.names(~indOutliers)];
+        data.histograms = double([getDescriptors(target.histograms(~indTargets), opts.descriptors); ...
+                                 getDescriptors(outliers.histograms(~indOutliers), opts.descriptors)]);
+        data.labels = [ones(lenTargets-numTargets, 1); -ones(lenOutliers-numOutliers, 1)];
+        printf('Number of validation images: %d targets, %d outliers\n', ...
+               sum(data.labels > 0), sum(data.labels < 0));
+    else
+        data.names = [target.names(~indTargets); outliers.names(indOutliers)];
+        data.histograms = double([getDescriptors(target.histograms(~indTargets), opts.descriptors); ...
+                                 getDescriptors(outliers.histograms(indOutliers), opts.descriptors) ]);
+        data.labels = [ones(lenTargets-numTargets, 1); -ones(numOutliers, 1)];
+        printf('Number of validation images: %d targets, %d outliers\n', ...
+               sum(data.labels > 0), sum(data.labels < 0));
+    end
+end
+
+end
