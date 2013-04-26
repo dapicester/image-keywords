@@ -30,7 +30,7 @@ opts.testRank   = false;
 opts.showPC     = false;
 opts = vl_argparse(opts, varargin);
 
-if opts.verbose, print = @fprintf; else print = @nop; end
+print = printHandle(opts.verbose);
 
 %% Train a classifier
 
@@ -61,10 +61,6 @@ end
 print('Test AP: %.2f %%\n', info.auc*100);
 
 results = stats(predictedLabels, test.labels);
-
-
-function nop(varargin)
-% NOP  Does nothing.
 
 
 function plot_pr(handler, title, labels, scores)
