@@ -1,5 +1,5 @@
 function [predictions, accuracy, scores] = predict(labels, data, model, varargin)
-% SVM.PREDICT  Make predictions using LIBSVM.
+% PREDICT  Make predictions using LIBSVM.
 %
 %   [PREDICTIONS, ACCURACY, SCORES] = SVM.PREDICT(LABELS, DATA, MODEL)
 %   [PREDICTIONS, ACCURACY, SCORES] = SVM.PREDICT(..., 'libsvm options')

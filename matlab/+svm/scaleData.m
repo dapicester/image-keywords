@@ -1,5 +1,5 @@
 function [scaled, ranges] = scaleData(input, varargin)
-% SVM.SCALEDATA Scale data for use with LIBSVM.
+% SCALEDATA Scale data for use with LIBSVM.
 % 
 %   [SCALED, RANGES] = SVM.SCALEDATA(INPUT)  Scale input data to a 
 %   restricted range. 

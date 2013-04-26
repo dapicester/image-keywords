@@ -1,5 +1,5 @@
 function model = trainOneSVM(labels, data, varargin)
-% SVM.TRAINONESVM  Train a one-class SVM using LIBSVM with precomputed kernels.
+% TRAINONESVM  Train a one-class SVM using LIBSVM with precomputed kernels.
 %   Default options are '-s 2 -t 4', any specified option will be appended.
 %
 %   MODEL = SVM.TRAINONESVM(LABELS, DATA)

@@ -1,5 +1,5 @@
 function out = chi2(x, y, varargin)
-% KERNEL.CHI2  Compute the chi-square kernel.
+% CHI2  Compute the chi-square kernel.
 %   OUT = KERNEL.CHI2(X,Y)  Compute the normal chi-square kernel
 %   defined as:
 %                        x_i * y_i

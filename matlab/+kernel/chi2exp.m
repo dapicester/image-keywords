@@ -1,5 +1,5 @@
 function out = chi2exp(x, y, varargin)
-% KERNEL.CHI2EXP  Compute the exponential chi-square kernel.
+% CHI2EXP  Compute the exponential chi-square kernel.
 %   OUT = KERNEL.CHI2EXP(X,Y)  Compute the exponential chi-square kernel
 %   defined as:
 %

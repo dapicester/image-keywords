@@ -1,5 +1,5 @@
 function out = histint(x, y)
-% KERNEL.HISTINT  Histogram intersection kernel.
+% HISTINT  Histogram intersection kernel.
 %   OUT = KERNEL.HISTINT(X, Y)  Compute the kernel defined as:
 %
 %   K(X, Y) = Sum min(X_i, Y_i) = 0.5 * Sum ( X_i + Y_i - |X_i - Y_i| )

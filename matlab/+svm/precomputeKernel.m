@@ -1,5 +1,5 @@
 function [traink, varargout] = precomputeKernel(kernel, train, varargin)
-% SVM.PRECOMPUTEKERNEL  Get LIBSVM data matrices for precomputed kernel.
+% PRECOMPUTEKERNEL  Get LIBSVM data matrices for precomputed kernel.
 %
 %   MAPPED = SVM.PRECOMPUTEKERNEL(KERNEL, DATA)  Precompute the kernel 
 %   matrix defined by the function hanle KERNEL on DATA.

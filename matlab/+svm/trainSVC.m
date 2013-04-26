@@ -1,5 +1,5 @@
 function model = trainSVC(labels, data, varargin)
-% SVM.TRAINSVC  Train a C-SVC using LIBSVM with precomputed kernels.
+% TRAINSVC  Train a C-SVC using LIBSVM with precomputed kernels.
 %   Default options are '-s 0 -t 4', any specified option will be appended.
 %
 %   MODEL = SVM.TRAINSVC(LABELS, DATA)
